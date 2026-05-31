@@ -990,11 +990,19 @@ code {
 .rule-table td:first-child { color: var(--primary); width: 100px; font-weight: 600; background: var(--surface); }
 
 /* ─── AI CHAT ─── */
+/* AI chat panel escapes the shell padding and fills full height */
+.shell:has(#panel-ai-chat.active) {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+.shell:has(#panel-ai-chat.active) .status-band {
+  display: none !important;
+}
 #panel-ai-chat.active {
   display: flex !important;
   flex-direction: column;
-  height: calc(100vh - var(--nav-h));
-  max-height: calc(100vh - var(--nav-h));
+  height: 100%;
+  min-height: 0;
 }
 .ai-chat-wrap {
   display: flex; flex-direction: column;
