@@ -1,104 +1,113 @@
-# Roster
+# ROSTER — BEC Forensic Console
 
-> **Open-source, local-first defense against display-name spoofing, lookalike-domain phishing, and Business Email Compromise.**
+> Detect business email compromise, phishing infrastructure, and display-name spoofing in seconds. No installation. No account. Runs entirely in your browser.
+
+**🔗 [roster.mom](https://roster.mom)**
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
 
-There are two ways to use Roster:
+---
 
-1. **In your browser, no installation** — open locally on GitHub Pages
-2. **As a Python CLI** — for SOC analysts and integration with SIEM / SOAR / MISP
+## What is ROSTER?
 
-Both share the same detection rules. Nothing is ever uploaded.
+ROSTER is an open-source forensic tool built for security analysts, IT teams, and anyone who receives suspicious emails. Paste a raw email, get a full breakdown — risk score, IP trail, domain intelligence, threat intel, and a geolocation map of where the email came from.
 
-## In-browser (recommended for everyone)
+Everything runs in your browser. Nothing is uploaded. Your data never leaves your device.
 
-The GUI has three tabs:
-- **Check Email** — paste a raw email, click *Check Email*, see findings
-- **Trust Roster** — define your organization, primary domains, and the people whose names get impersonated (CEO, CFO, contractors). Saved automatically in your browser's localStorage.
-- **About** — the threat model and what the tool does and does not defend against
+---
 
-## How to get a raw email to paste in
+## Features
 
-- **Gmail:** open the email → 3-dot menu → *Show original* → copy the entire content
-- **Outlook (web):** 3-dot menu → *View → View message source*
-- **Apple Mail:** *View → Message → Raw Source*
+- **Risk scoring** — 0–100 composite score with detailed findings and evidence
+- **IP origin tracing** — follows every hop in the Received chain, plots them on a live map
+- **DMARC / SPF / DKIM analysis** — checks authentication results and flags failures
+- **Display name spoofing detection** — catches the right name from the wrong address
+- **Lookalike domain detection** — typosquats, Punycode, homograph attacks
+- **RDAP domain intelligence** — registration date, registrar, nameservers
+- **VirusTotal + URLhaus + Talos** — multi-engine threat reputation
+- **Trust Roster** — define your org, executives, and trusted senders once, reuse forever
+- **Detection history** — every analysis saved locally, click any entry to replay it
+- **Custom detection rules** — write your own rules with no code
+- **PDF report export** — one-click forensic report
 
-## Detection rules
+---
+
+## AI Roster Setup
+
+Instead of manually configuring your Trust Roster, paste any text about your organisation — an email signature, org chart, LinkedIn bio, or plain description — and AI fills everything in automatically.
+
+Works with any LLM:
+
+| Provider | Cost | Get Key |
+|---|---|---|
+| Gemini Flash | Free | [aistudio.google.com](https://aistudio.google.com) |
+| Groq / Llama 3 | Free | [console.groq.com](https://console.groq.com) |
+| OpenAI GPT-4o | Paid | [platform.openai.com](https://platform.openai.com) |
+| Claude Haiku | Paid | [console.anthropic.com](https://console.anthropic.com) |
+| Custom / Self-hosted | — | Ollama, LM Studio, any OpenAI-compatible endpoint |
+
+---
+
+## How to get a raw email
+
+- **Gmail** — open email → three-dot menu → *Show original* → copy all
+- **Outlook (web)** — three-dot menu → *View → View message source*
+- **Apple Mail** — *View → Message → Raw Source*
+
+---
+
+## Detection Rules
 
 | Rule | What it catches | Severity |
-|------|-----------------|----------|
-| `ROSTER-001` | Display-name impersonation (right name, wrong address) | Critical |
-| `ROSTER-002` | Lookalike sender domain (typosquats, edit distance ≤ 2) | High |
-| `ROSTER-003` | Punycode / non-ASCII (homograph attacks) | High |
-| `ROSTER-004` | Reply-To divergence on roster sender | High |
-| `ROSTER-005` | Missing auth headers (when DMARC required) | Medium |
-| `ROSTER-006` | SPF / DKIM / DMARC failure on roster sender | Critical |
-| `ROSTER-007` | Unknown sender + financial-action language | Medium |
+|---|---|---|
+| `ROSTER-001` | Display-name impersonation | Critical |
+| `ROSTER-002` | Lookalike / typosquatted sender domain | High |
+| `ROSTER-003` | Punycode / homograph attack | High |
+| `ROSTER-004` | Reply-To divergence on trusted sender | High |
+| `ROSTER-005` | Missing authentication headers | Medium |
+| `ROSTER-006` | SPF / DKIM / DMARC failure | Critical |
+| `ROSTER-007` | Unknown sender with financial language | Medium |
 
-## Enabling the hosted version (GitHub Pages)
+Custom rules can be added directly in the app under Detection Rules.
 
-If you're hosting this repo, you can get a free public URL for the tool in 30 seconds:
+---
 
-1. On your repo page, click **Settings** (top tab)
-2. In the left sidebar, click **Pages**
-3. Under "Build and deployment":
-   - **Source:** Deploy from a branch
-   - **Branch:** `main` and `/` (root)
-4. Click **Save**
-5. Wait 1–2 minutes, then visit `https://YOUR-USERNAME.github.io/roster/`
+## Security
 
-That's the URL you can share with anyone. They paste an email, the tool runs in their browser, nothing gets uploaded.
+- Content Security Policy headers on all responses
+- Input validation and sanitisation on every field
+- All localStorage access wrapped in try/catch with schema validation
+- No telemetry, no analytics, no backend, no accounts
+- API keys stored locally in your browser only
 
-## Python CLI (for analysts)
+---
 
-If you have Python 3.10+:
-
-```bash
-git clone https://github.com/YOUR-USERNAME/roster
-cd roster
-pip install -e ".[dev]"
-roster verify examples/sample-phish.eml --roster examples/trust-roster.yaml
-```
-
-JSON output (for SIEM / SOAR / MISP):
-
-```bash
-roster verify message.eml --roster trust-roster.yaml --json
-```
-
-Run the tests:
-
-```bash
-pytest
-```
-
-## Threat model
+## Threat Model
 
 **Defends against:**
 - Display-name spoofing from arbitrary domains
-- Lookalike / typosquatted sender domains
+- Lookalike and typosquatted sender domains
 - IDN / Punycode homograph attacks
-- Reply-To redirects on roster senders
+- Reply-To redirects on trusted senders
 - SPF / DKIM / DMARC bypass attempts
-- First-contact senders using financial-fraud language
+- First-contact senders using financial language
 
-**Does NOT defend against:**
-- Compromised legitimate vendor mailboxes (no behavioral profiling in v0.1)
-- Malicious attachments or URLs (use ClamAV or a URL sandbox in parallel)
-- Deepfake voice / video referenced inside email bodies
+**Does not defend against:**
+- Compromised legitimate vendor mailboxes
+- Malicious attachments or URLs
 - Account compromise via session token theft
 
-## Privacy
+---
 
-Everything runs locally. The browser version stores your roster in `localStorage`, which never leaves your device. The Python version reads YAML files on your disk. There is no telemetry, no analytics, no phone-home, no cloud component.
+## Roadmap
 
-## Contributing
+- ML-based pattern detection trained on company-specific threat history
+- Shared threat intelligence across clients
+- Backend API for enterprise deployments
+- ISO 27001 compliance package
 
-This is a community-driven project. The maintainer is a CTI/OSINT professional; Python contributors are very welcome — see `CONTRIBUTING.md`.
-
-The biggest help right now: code review on the detection rules, and sanitized real-world phish samples to build a public test corpus.
+---
 
 ## License
 
-Apache 2.0.
+Apache 2.0 — free to use, fork, and deploy.
