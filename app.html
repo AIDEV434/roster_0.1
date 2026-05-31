@@ -1061,14 +1061,14 @@ code {
 .chat-bubble.user .chat-bubble-inner {
   background: rgba(0,240,255,0.12);
   border: 1px solid rgba(0,240,255,0.3);
-  color: #e0feff;
+  color: #ffffff;
   border-bottom-right-radius: 3px;
   box-shadow: 0 0 12px rgba(0,240,255,0.08);
 }
 .chat-bubble.ai .chat-bubble-inner {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
-  color: #d0dde8;
+  color: #ffffff;
   border-bottom-left-radius: 3px;
 }
 .chat-bubble-meta {
@@ -6007,7 +6007,7 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
     while ((match = ruleBlockRe.exec(content)) !== null) {
       // text before the block
       const before = content.slice(last, match.index);
-      if (before) html += `<span style="color:var(--text-1);white-space:pre-wrap;">${escapeHtml(before)}</span>`;
+      if (before) html += `<span style="color:#ffffff;white-space:pre-wrap;">${escapeHtml(before)}</span>`;
       // parse the rule JSON
       let ruleJson = null;
       try { ruleJson = JSON.parse(match[1].trim()); } catch {}
@@ -6025,8 +6025,8 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
       last = match.index + match[0].length;
     }
     const rest = content.slice(last);
-    if (rest) html += `<span style="color:var(--text-1);white-space:pre-wrap;">${escapeHtml(rest)}</span>`;
-    return html || `<span style="color:var(--text-1);white-space:pre-wrap;">${escapeHtml(content)}</span>`;
+    if (rest) html += `<span style="color:#ffffff;white-space:pre-wrap;">${escapeHtml(rest)}</span>`;
+    return html || `<span style="color:#ffffff;white-space:pre-wrap;">${escapeHtml(content)}</span>`;
   }
 
   function scrollToBottom() {
