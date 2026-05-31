@@ -1,0 +1,20 @@
+Return-Path: <attacker@acrne-corp.com>
+Authentication-Results: mx.example.com; spf=fail smtp.mailfrom=acrne-corp.com; dkim=none; dmarc=fail
+From: "Alice Johnson" <alice@acrne-corp.com>
+Reply-To: <attacker@gmail.com>
+To: "Finance Team" <finance@acme.com>
+Subject: URGENT: Wire transfer needed today
+Date: Mon, 18 May 2026 09:00:00 -0400
+Message-ID: <abc123@acrne-corp.com>
+Content-Type: text/plain; charset=utf-8
+
+Hi team,
+
+I need you to process an urgent wire transfer of $47,000 today.
+The vendor has changed their banking details — please use the new
+account I will send in a separate message.
+
+Reply to this email if you have any questions.
+
+Thanks,
+Alice

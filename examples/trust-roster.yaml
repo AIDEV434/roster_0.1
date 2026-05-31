@@ -1,0 +1,50 @@
+# Sample trust roster.
+# Replace with your real people, domains, and authority levels.
+version: 1
+
+organization:
+  name: "ACME Corp"
+  primary_domains:
+    - acme.com
+    - acme.co.uk
+  dmarc_required: true
+
+people:
+  - id: alice-cfo
+    display_names:
+      - "Alice Johnson"
+      - "Alice J. Johnson"
+      - "A. Johnson"
+    addresses:
+      - alice@acme.com
+      - alice.johnson@acme.com
+    role: CFO
+    authority:
+      financial: high
+      hr: medium
+      vendor_changes: high
+
+  - id: bob-ceo
+    display_names:
+      - "Bob Smith"
+      - "Robert Smith"
+    addresses:
+      - bob@acme.com
+      - ceo@acme.com
+    role: CEO
+    authority:
+      financial: high
+      hr: high
+      vendor_changes: high
+
+  - id: carol-contractor
+    display_names:
+      - "Carol Davis"
+    addresses:
+      - carol@external-contractor.io
+    role: External Contractor (Design)
+    organization: "External Contractor Co"
+    valid_until: 2026-12-31
+    authority:
+      financial: none
+      vendor_changes: none

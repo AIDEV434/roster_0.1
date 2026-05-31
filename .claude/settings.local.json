@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(which npx *)",
+      "Bash(ls /usr/bin/python* /usr/local/bin/python* /opt/homebrew/bin/python* 2>/dev/null; which ruby; which php)",
+      "Bash(/usr/bin/ruby --version)",
+      "Read(//Applications/**)",
+      "Bash(command -v node python python3 ruby)",
+      "Bash(open /Users/dc/Downloads/roster/index.html)",
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:7723/)",
+      "Bash(grep -n \"^</section>$\\\\|^<!-- ══ PANEL\" /Users/dc/Downloads/roster/index.html)"
+    ]
+  }
+}
