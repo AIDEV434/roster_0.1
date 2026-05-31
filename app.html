@@ -991,15 +991,18 @@ code {
 .shell:has(#panel-ai-chat.active) {
   padding: 0 !important;
   overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 .shell:has(#panel-ai-chat.active) .status-band {
   display: none !important;
 }
 #panel-ai-chat.active {
   display: flex !important;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
+  flex-direction: column !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: 100% !important;
 }
 .ai-chat-wrap {
   display: flex; flex-direction: column;
@@ -5865,7 +5868,6 @@ Default dmarc_required to true. Infer domains from email addresses if not stated
   const messagesEl  = document.getElementById('chat-messages');
   const inputEl     = document.getElementById('chat-input');
   const sendBtn     = document.getElementById('chat-send-btn');
-  const clearBtn    = document.getElementById('chat-clear-btn');
   const noKeyEl     = document.getElementById('chat-no-key');
   const providerLbl = document.getElementById('chat-provider-label');
   const setupAiBtn  = document.getElementById('chat-setup-ai-btn');
@@ -6319,12 +6321,18 @@ What do you need?</div>
     inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
   });
 
-  clearBtn.addEventListener('click', () => {
-    chatHistory = [];
-    messagesEl.innerHTML = '';
-    addWelcome();
-    chatInited = true; // keep inited so proxy check doesn't re-run
-  });
+  // Clear button — wire by ID in case reference was stale
+  function bindClearBtn() {
+    const btn = document.getElementById('chat-clear-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      chatHistory = [];
+      messagesEl.innerHTML = '';
+      addWelcome();
+      chatInited = true;
+    });
+  }
+  bindClearBtn();
 
   setupAiBtn?.addEventListener('click', () => {
     document.getElementById('ai-setup-btn')?.click();
