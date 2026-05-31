@@ -15,39 +15,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════
-   ROSTER — Slate + Indigo Theme
+   ROSTER — Dark Cyber Theme
 ═══════════════════════════════════════════════════ */
 :root {
-  --bg:             #F1F5F9;
-  --surface:        #FFFFFF;
-  --surface-2:      #F8FAFC;
-  --surface-3:      #F1F5F9;
-  --border:         #E2E8F0;
-  --border-2:       #CBD5E1;
+  --bg:             #0a0d12;
+  --surface:        #111620;
+  --surface-2:      #161b26;
+  --surface-3:      #1c2130;
+  --border:         #1e2535;
+  --border-2:       #2a3347;
 
-  --text-1:         #0F172A;
-  --text-2:         #374151;
-  --text-3:         #9CA3AF;
+  --text-1:         #f0f4ff;
+  --text-2:         #a0aec0;
+  --text-3:         #4a5568;
 
   --primary:        #4F46E5;
-  --primary-light:  #EEF2FF;
-  --primary-border: #C7D2FE;
+  --primary-light:  rgba(79,70,229,0.15);
+  --primary-border: rgba(79,70,229,0.35);
 
-  --green:          #059669;
-  --green-light:    #ECFDF5;
-  --green-border:   #6EE7B7;
+  --green:          #10b981;
+  --green-light:    rgba(16,185,129,0.12);
+  --green-border:   rgba(16,185,129,0.3);
 
-  --amber:          #D97706;
-  --amber-light:    #FFFBEB;
-  --amber-border:   #FCD34D;
+  --amber:          #f59e0b;
+  --amber-light:    rgba(245,158,11,0.12);
+  --amber-border:   rgba(245,158,11,0.3);
 
-  --red:            #DC2626;
-  --red-light:      #FEF2F2;
-  --red-border:     #FECACA;
+  --red:            #ef4444;
+  --red-light:      rgba(239,68,68,0.12);
+  --red-border:     rgba(239,68,68,0.3);
 
-  --purple:         #4F46E5;
-  --purple-light:   #EEF2FF;
-  --purple-border:  #C7D2FE;
+  --purple:         #8b5cf6;
+  --purple-light:   rgba(139,92,246,0.12);
+  --purple-border:  rgba(139,92,246,0.3);
 
   --font-body:      'Inter', system-ui, sans-serif;
   --font-mono:      'JetBrains Mono', 'Menlo', monospace;
@@ -56,11 +56,11 @@
   --radius-sm:      5px;
   --radius-lg:      14px;
 
-  --shadow:         0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
-  --shadow-md:      0 4px 16px rgba(15,23,42,0.10), 0 2px 4px rgba(15,23,42,0.04);
-  --shadow-lg:      0 12px 32px rgba(15,23,42,0.12), 0 4px 8px rgba(15,23,42,0.06);
+  --shadow:         0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md:      0 4px 16px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
+  --shadow-lg:      0 12px 32px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.4);
 
-  /* Legacy aliases used by JS-generated HTML */
+  /* Legacy aliases */
   --bg-void:        var(--bg);
   --bg-deep:        var(--surface);
   --bg-panel:       var(--surface);
@@ -77,34 +77,32 @@
   --txt-body:       var(--text-2);
   --txt-bright:     var(--text-1);
   --txt-white:      var(--text-1);
-  --cyan:           var(--primary);
-  --cyan-dim:       #4338CA;
-  --cyan-glow:      var(--primary-light);
-  --cyan-pulse:     var(--primary-light);
+  --cyan:           #00f0ff;
+  --cyan-dim:       rgba(0,240,255,0.5);
+  --cyan-glow:      rgba(0,240,255,0.1);
+  --cyan-pulse:     rgba(0,240,255,0.15);
   --blue:           var(--primary);
   --blue-dim:       #4338CA;
   --blue-bg:        var(--primary-light);
   --blue-border:    var(--primary-border);
   --threat:         var(--red);
-  --threat-dim:     #DC2626;
+  --threat-dim:     #ef4444;
   --threat-glow:    var(--red-light);
   --warn:           var(--amber);
-  --warn-dim:       #D97706;
+  --warn-dim:       #f59e0b;
   --warn-glow:      var(--amber-light);
   --clean:          var(--green);
-  --clean-dim:      #059669;
+  --clean-dim:      #10b981;
   --clean-glow:     var(--green-light);
-  --surface-2:      #F8FAFC;
-  --surface-3:      #F1F5F9;
-  --purple-bg:      var(--primary-light);
-  --purple-border:  var(--border);
-  --purple-glow:    var(--primary-light);
+  --purple-bg:      var(--purple-light);
+  --purple-border:  rgba(139,92,246,0.3);
+  --purple-glow:    var(--purple-light);
   --red-bg:         var(--red-light);
-  --red-border:     var(--red-border);
+  --red-border:     rgba(239,68,68,0.3);
   --green-bg:       var(--green-light);
-  --green-border:   var(--green-border);
+  --green-border:   rgba(16,185,129,0.3);
   --amber-bg:       var(--amber-light);
-  --amber-border:   var(--amber-border);
+  --amber-border:   rgba(245,158,11,0.3);
 }
 
 /* ─── RESET & BASE ─── */
@@ -466,7 +464,7 @@ label small {
   background: var(--green); border-color: var(--green);
 }
 .rdap-toggle input:checked + .switch::after {
-  left: 23px; background: #fff;
+  left: 23px; background: var(--text-1);
 }
 .rdap-toggle .copy {
   font-family: var(--font-body); font-size: 13px;
@@ -1714,7 +1712,7 @@ code {
 .map-cell .sub { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 2px; }
 
 /* Leaflet overrides — keep light theme */
-.leaflet-container { background: #F1F5F9; }
+.leaflet-container { background: #0a0d12; }
 .leaflet-popup-content-wrapper {
   background: var(--surface) !important; border: 1px solid var(--border) !important;
   color: var(--text-1) !important; border-radius: var(--radius) !important;
@@ -5021,7 +5019,7 @@ function renderScoreRing(score, parentEl) {
     : score.total >= 40 ? '#F97316'
     : score.total >= 15 ? '#F59E0B'
     : '#10B981';
-  const trackColor = '#E2E8F0';
+  const trackColor = '#1e2535';
 
   parentEl.innerHTML = `
     <svg viewBox="0 0 140 140" width="128" height="128" class="score-ring-svg">
@@ -5140,7 +5138,7 @@ function downloadPDF() {
   const { email, findings, score, rdapData, vtResult, uhResult, domain, timestamp } = state;
 
   const scoreCol = score.total >= 70 ? '#DC2626' : score.total >= 40 ? '#EA580C' : score.total >= 15 ? '#D97706' : '#059669';
-  const sevBg = { critical:'#FEF2F2', high:'#FFF7ED', medium:'#FFFBEB', low:'#ECFDF5', info:'#F1F5F9' };
+  const sevBg = { critical:'rgba(239,68,68,0.1)', high:'rgba(245,158,11,0.1)', medium:'rgba(245,158,11,0.07)', low:'rgba(16,185,129,0.08)', info:'rgba(255,255,255,0.04)' };
   const sevCol = { critical:'#DC2626', high:'#EA580C', medium:'#D97706', low:'#059669', info:'#64748B' };
   const date = timestamp.replace('T',' ').slice(0,19) + ' UTC';
 
@@ -5153,26 +5151,26 @@ function downloadPDF() {
   ];
 
   const findingsHtml = findings.length ? findings.map(f => `
-    <div style="border:1px solid #E2E8F0;border-radius:6px;margin-bottom:10px;overflow:hidden">
-      <div style="background:${sevBg[f.severity]||'#F8FAFC'};padding:10px 14px;display:flex;align-items:center;gap:10px">
-        <span style="background:${sevCol[f.severity]||'#64748B'};color:#fff;font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 7px;border-radius:3px;text-transform:uppercase">${esc(f.severity)}</span>
-        <strong style="color:#0F172A;font-size:12px;flex:1">${esc(f.title)}</strong>
-        <span style="font-family:monospace;font-size:11px;color:${sevCol[f.severity]||'#64748B'};font-weight:700">+${f.score}</span>
+    <div style="border:1px solid #1e2535;border-radius:6px;margin-bottom:10px;overflow:hidden">
+      <div style="background:${sevBg[f.severity]||'rgba(255,255,255,0.04)'};padding:10px 14px;display:flex;align-items:center;gap:10px">
+        <span style="background:${sevCol[f.severity]||'#4a5568'};color:#fff;font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 7px;border-radius:3px;text-transform:uppercase">${esc(f.severity)}</span>
+        <strong style="color:#f0f4ff;font-size:12px;flex:1">${esc(f.title)}</strong>
+        <span style="font-family:monospace;font-size:11px;color:${sevCol[f.severity]||'#a0aec0'};font-weight:700">+${f.score}</span>
       </div>
-      <div style="padding:10px 14px;background:#fff">
-        <p style="margin:0 0 6px;font-size:11px;color:#475569">${(f.description||'').replace(/<[^>]+>/g,'')}</p>
-        <p style="margin:0;font-size:10px;color:#94A3B8">&#8594; ${esc(f.action||'')}</p>
+      <div style="padding:10px 14px;background:#111620">
+        <p style="margin:0 0 6px;font-size:11px;color:#a0aec0">${(f.description||'').replace(/<[^>]+>/g,'')}</p>
+        <p style="margin:0;font-size:10px;color:#4a5568">&#8594; ${esc(f.action||'')}</p>
       </div>
-    </div>`).join('') : '<p style="color:#94A3B8;font-style:italic">No findings detected — email appears legitimate.</p>';
+    </div>`).join('') : '<p style="color:#4a5568;font-style:italic">No findings detected — email appears legitimate.</p>';
 
   const rdapHtml = rdapData && !rdapData.notFound ? `
     <table style="width:100%;border-collapse:collapse;font-size:11px">
       ${[['Registered', rdapData.registration?.split('T')[0]||'—'],['Registrar',rdapData.registrar||'—'],['Expires',rdapData.expiration?.split('T')[0]||'—'],['DNSSEC',rdapData.dnssec?'Signed':'Not signed'],['Nameservers',(rdapData.nameservers||[]).join(', ')||'—']].map(([k,v])=>`
-      <tr style="border-bottom:1px solid #F1F5F9">
-        <td style="padding:7px 12px;color:#64748B;font-weight:600;width:130px;background:#F8FAFC;font-size:10px;text-transform:uppercase;letter-spacing:.06em">${k}</td>
-        <td style="padding:7px 12px;color:#0F172A">${esc(String(v))}</td>
+      <tr style="border-bottom:1px solid #1e2535">
+        <td style="padding:7px 12px;color:#4a5568;font-weight:600;width:130px;background:#0a0d12;font-size:10px;text-transform:uppercase;letter-spacing:.06em">${k}</td>
+        <td style="padding:7px 12px;color:#f0f4ff">${esc(String(v))}</td>
       </tr>`).join('')}
-    </table>` : '<p style="color:#94A3B8;font-style:italic">RDAP data not available.</p>';
+    </table>` : '<p style="color:#4a5568;font-style:italic">RDAP data not available.</p>';
 
   const vtSummary = vtResult?.ok ? `${vtResult.data.malicious+vtResult.data.suspicious}/${vtResult.data.totalEngines} engines flagged` : 'Not queried';
   const uhSummary = uhResult?.ok ? (uhResult.data.found ? `Listed — ${uhResult.data.urlCount} URLs` : 'Clean — not listed') : 'Query failed';
