@@ -15,7 +15,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; connect-src 'self' https://api.anthropic.com https://generativelanguage.googleapis.com https://api.groq.com https://api.openai.com https://ipapi.co https://rdap.org https://rdap.arin.net https://rdap.db.ripe.net https://www.virustotal.com https://urlhaus-api.abuse.ch https://*.basemaps.cartocdn.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org; font-src 'self' https://cdnjs.cloudflare.com; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; connect-src 'self' https://api.anthropic.com https://generativelanguage.googleapis.com https://api.groq.com https://api.openai.com https://ipapi.co https://rdap.org https://rdap.arin.net https://rdap.db.ripe.net https://www.virustotal.com https://urlhaus-api.abuse.ch https://*.basemaps.cartocdn.com https://api.allorigins.win; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org; font-src 'self' https://cdnjs.cloudflare.com; frame-ancestors 'none'"
         },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },

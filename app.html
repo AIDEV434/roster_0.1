@@ -2233,7 +2233,17 @@ To extract the raw source:
         <span class="vt-status" id="ai-key-status">No key</span>
       </div>
 
-      <label>Organisation info</label>
+      <label>Scrape from URL <span style="font-weight:400;color:var(--text-2);font-size:11px;">(website, LinkedIn, team page)</span></label>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <input type="url" id="ai-scrape-url" placeholder="https://yourcompany.com/about  or  https://linkedin.com/company/..." style="flex:1;font-family:var(--font-mono);font-size:12px;background:var(--surface);border:1px solid var(--border);color:var(--text-1);padding:8px 10px;border-radius:var(--radius);outline:none;">
+        <button class="btn ghost" id="ai-scrape-btn" style="white-space:nowrap;flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Scrape
+        </button>
+      </div>
+      <div id="ai-scrape-status" style="font-size:11px;color:var(--text-2);margin-bottom:6px;min-height:14px;font-family:var(--font-mono);"></div>
+
+      <label>Organisation info <span style="font-weight:400;color:var(--text-2);font-size:11px;">(or paste manually)</span></label>
       <textarea id="ai-org-input" placeholder="e.g.&#10;Company: Acme Corp (acme.com, acme.co.uk)&#10;CEO: John Smith &lt;john@acme.com&gt;&#10;CFO: Sarah Lee &lt;sarah.lee@acme.com&gt;&#10;IT uses Microsoft 365. DMARC enforced.&#10;&#10;Or paste email signatures, org charts, LinkedIn text..."></textarea>
       <div id="ai-preview-box" class="ai-preview-box" style="display:none"></div>
     </div>
@@ -5565,6 +5575,56 @@ Default dmarc_required to true. Infer domains from email addresses if not stated
       loadProvider(currentProvider);
     }
     function closeModal() { overlay.style.display = 'none'; }
+
+    // ── URL scraper ──────────────────────────────────────────────────────────
+    document.getElementById('ai-scrape-btn').addEventListener('click', async () => {
+      const urlInput = document.getElementById('ai-scrape-url');
+      const scrapeStatus = document.getElementById('ai-scrape-status');
+      const url = urlInput.value.trim();
+
+      if (!url) { scrapeStatus.textContent = 'Paste a URL first.'; return; }
+      let parsed;
+      try { parsed = new URL(url); } catch { scrapeStatus.textContent = 'Invalid URL.'; return; }
+      if (!['http:', 'https:'].includes(parsed.protocol)) { scrapeStatus.textContent = 'Must be http or https.'; return; }
+
+      const btn = document.getElementById('ai-scrape-btn');
+      btn.disabled = true;
+      scrapeStatus.textContent = 'Fetching page…';
+
+      try {
+        // Use allorigins CORS proxy
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        const res = await fetch(proxyUrl);
+        if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
+        const data = await res.json();
+        const html = data.contents || '';
+        if (!html) throw new Error('Empty response from page.');
+
+        // Strip HTML → clean text
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html
+          .replace(/<script[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[\s\S]*?<\/style>/gi, '')
+          .replace(/<nav[\s\S]*?<\/nav>/gi, '')
+          .replace(/<footer[\s\S]*?<\/footer>/gi, '')
+          .replace(/<header[\s\S]*?<\/header>/gi, '');
+        const text = (tmp.textContent || tmp.innerText || '')
+          .replace(/\s{3,}/g, '\n\n')
+          .trim()
+          .slice(0, 8000); // cap at 8k chars for AI token limit
+
+        if (text.length < 50) throw new Error('Could not extract readable text from this page.');
+
+        orgInput.value = text;
+        scrapeStatus.textContent = `Done — ${text.length} characters extracted. Review then click Generate Roster.`;
+        scrapeStatus.style.color = 'var(--green)';
+      } catch (err) {
+        scrapeStatus.textContent = `Failed: ${err.message}`;
+        scrapeStatus.style.color = 'var(--red)';
+      } finally {
+        btn.disabled = false;
+      }
+    });
 
     document.getElementById('ai-setup-btn').addEventListener('click', openModal);
     document.getElementById('ai-modal-close').addEventListener('click', closeModal);
