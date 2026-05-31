@@ -990,6 +990,11 @@ code {
 .rule-table td:first-child { color: var(--primary); width: 100px; font-weight: 600; background: var(--surface); }
 
 /* ─── AI CHAT ─── */
+#panel-ai-chat.active {
+  display: flex !important;
+  flex-direction: column;
+  height: calc(100vh - var(--nav-h));
+}
 .ai-chat-wrap {
   display: flex; flex-direction: column; height: 100%;
   background: var(--surface); overflow: hidden;
@@ -2513,7 +2518,7 @@ To extract the raw source:
 </section>
 
 <!-- PANEL: AI CHAT -->
-<section class="panel" id="panel-ai-chat" style="padding:0;height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;overflow:hidden;">
+<section class="panel" id="panel-ai-chat" style="padding:0;overflow:hidden;">
 
   <div class="ai-chat-wrap">
     <div class="ai-chat-header">
@@ -5943,7 +5948,7 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
     while ((match = ruleBlockRe.exec(content)) !== null) {
       // text before the block
       const before = content.slice(last, match.index);
-      if (before) html += `<span>${escapeHtml(before)}</span>`;
+      if (before) html += `<span style="color:var(--text-1);white-space:pre-wrap;">${escapeHtml(before)}</span>`;
       // parse the rule JSON
       let ruleJson = null;
       try { ruleJson = JSON.parse(match[1].trim()); } catch {}
@@ -5951,21 +5956,21 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
         const safe = escapeHtml(JSON.stringify(ruleJson));
         html += `<div style="margin:10px 0;background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.25);border-radius:10px;padding:12px 14px;">
           <div style="font-size:11px;font-family:var(--font-mono);color:var(--primary-light);margin-bottom:6px;">Detection Rule · ${escapeHtml(ruleJson.id||'CUSTOM')}</div>
-          <div style="font-weight:600;font-size:13px;margin-bottom:2px;">${escapeHtml(ruleJson.name||'')}</div>
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px;color:var(--text-1);">${escapeHtml(ruleJson.name||'')}</div>
           <div style="font-size:12px;color:var(--text-2);margin-bottom:8px;">${escapeHtml(ruleJson.description||'')}</div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span style="font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:4px;background:var(--bg);border:1px solid var(--border);">severity: ${escapeHtml(ruleJson.severity||'medium')}</span>
+            <span style="font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2);">severity: ${escapeHtml(ruleJson.severity||'medium')}</span>
             <button onclick='addRuleFromChat(${safe})' style="font-size:11px;padding:4px 12px;border-radius:6px;border:none;background:var(--primary);color:#fff;cursor:pointer;font-weight:600;">+ Add Rule</button>
           </div>
         </div>`;
       } else {
-        html += `<pre style="font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;overflow-x:auto;">${escapeHtml(match[1])}</pre>`;
+        html += `<pre style="font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;overflow-x:auto;color:var(--text-1);">${escapeHtml(match[1])}</pre>`;
       }
       last = match.index + match[0].length;
     }
     const rest = content.slice(last);
-    if (rest) html += `<span>${escapeHtml(rest)}</span>`;
-    return html || escapeHtml(content);
+    if (rest) html += `<span style="color:var(--text-1);white-space:pre-wrap;">${escapeHtml(rest)}</span>`;
+    return html || `<span style="color:var(--text-1);white-space:pre-wrap;">${escapeHtml(content)}</span>`;
   }
 
   function addBubble(role, content) {
@@ -6165,15 +6170,21 @@ What do you need?</div>
     messagesEl.style.display = 'flex';
   }
 
+  let chatInited = false;
+
   async function initChat() {
     updateContextBar();
+    // Only run full init once (preserves chat history across tab switches)
+    if (chatInited) return;
+    chatInited = true;
+
     // Try proxy first
     const proxOk = await proxyAvailable();
     if (proxOk) {
       usingProxy = true;
       providerLbl.textContent = 'proxy · Groq';
       showChat();
-      if (messagesEl.children.length === 0) addWelcome();
+      addWelcome();
       return;
     }
     // Fallback to user-configured provider
@@ -6182,7 +6193,7 @@ What do you need?</div>
       usingProxy = false;
       providerLbl.textContent = active.p.label;
       showChat();
-      if (messagesEl.children.length === 0) addWelcome();
+      addWelcome();
     } else {
       usingProxy = false;
       showNoKey();
@@ -6206,6 +6217,7 @@ What do you need?</div>
     chatHistory = [];
     messagesEl.innerHTML = '';
     addWelcome();
+    chatInited = true; // keep inited so proxy check doesn't re-run
   });
 
   setupAiBtn?.addEventListener('click', () => {
