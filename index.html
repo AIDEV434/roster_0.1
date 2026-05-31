@@ -72,6 +72,7 @@ nav::after {
   opacity: 0.25;
 }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-wordmark { font-size: 15px; font-weight: 900; letter-spacing: 0.08em; color: var(--text1); text-transform: uppercase; }
 .nav-logo svg { width: 30px; height: 30px; }
 .nav-links { display: flex; align-items: center; gap: 28px; white-space: nowrap; }
 .nav-links a { text-decoration: none; color: var(--text2); font-size: 14px; font-weight: 500; transition: color 0.2s; }
@@ -362,7 +363,8 @@ nav::after {
 }
 .feat-card:hover { background: var(--bg2); }
 .feat-card:hover::after { opacity: 0.6; }
-.feat-icon { font-size: 26px; margin-bottom: 16px; }
+.feat-icon { width: 40px; height: 40px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid var(--feat-icon-border, rgba(0,240,255,0.18)); background: var(--feat-icon-bg, rgba(0,240,255,0.07)); }
+.feat-icon svg { width: 20px; height: 20px; }
 .feat-title { font-size: 15px; font-weight: 800; color: var(--text1); margin-bottom: 8px; letter-spacing: -0.01em; }
 .feat-desc { font-size: 13px; color: var(--text2); line-height: 1.65; }
 .feat-rule {
@@ -415,7 +417,8 @@ nav::after {
 .scard::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: opacity 0.3s; }
 .scard:hover { border-color: rgba(0,240,255,0.2); transform: translateY(-3px); }
 .scard:hover::before { opacity: 0.5; }
-.scard-icon { font-size: 26px; margin-bottom: 14px; }
+.scard-icon { width: 40px; height: 40px; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: rgba(0,240,255,0.06); border: 1px solid rgba(0,240,255,0.15); }
+.scard-icon svg { width: 20px; height: 20px; }
 .scard-title { font-size: 14px; font-weight: 800; color: var(--text1); margin-bottom: 8px; letter-spacing: -0.01em; }
 .scard-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
 
@@ -465,6 +468,7 @@ footer {
       <path d="M16 4L27 9V17C27 23 22 27.5 16 29C10 27.5 5 23 5 17V9L16 4Z" stroke="#00f0ff" stroke-width="1.5" stroke-linejoin="round"/>
       <path d="M11 16.5L14.5 20L21 13" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
+    <span class="nav-wordmark">ROSTER</span>
   </a>
   <div class="nav-links">
     <a href="#how-it-works">How it works</a>
@@ -479,6 +483,14 @@ footer {
 <section style="position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;padding-top:60px;">
   <div style="max-width:1300px;margin:0 auto;padding:80px 56px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;width:100%;" class="hero-grid">
     <div class="hero-left">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
+        <svg width="44" height="44" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="rgba(0,240,255,0.06)"/>
+          <path d="M16 4L27 9V17C27 23 22 27.5 16 29C10 27.5 5 23 5 17V9L16 4Z" stroke="#00f0ff" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M11 16.5L14.5 20L21 13" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span style="font-size:22px;font-weight:900;letter-spacing:0.1em;color:var(--text1);text-transform:uppercase;">ROSTER</span>
+      </div>
       <div class="hero-badge">
         <span class="bdot"></span>
         Live &nbsp;&middot;&nbsp; v0.1 &nbsp;&middot;&nbsp; roster.mom
@@ -680,38 +692,38 @@ footer {
       <h2 class="section-h2">Everything a forensic analyst needs</h2>
     </div>
     <div class="features-grid">
-      <div class="feat-card" style="--feat-color:var(--cyan)">
-        <div class="feat-icon">&#x1F6E1;&#xFE0F;</div>
+      <div class="feat-card" style="--feat-color:var(--cyan);--feat-icon-bg:rgba(0,240,255,0.07);--feat-icon-border:rgba(0,240,255,0.2);">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
         <div class="feat-title">Risk Scoring</div>
         <div class="feat-desc">0 to 100 composite score with detailed findings, evidence chains, and a clear verdict per analysis.</div>
         <span class="feat-rule">0&ndash;100 Score</span>
       </div>
-      <div class="feat-card" style="--feat-color:#818cf8">
-        <div class="feat-icon">&#x1F30D;</div>
+      <div class="feat-card" style="--feat-color:#818cf8;--feat-icon-bg:rgba(129,140,248,0.08);--feat-icon-border:rgba(129,140,248,0.2);">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
         <div class="feat-title">IP Origin Tracing</div>
         <div class="feat-desc">Every hop in the Received chain plotted on a live map. ISP, ASN, and proxy detection included.</div>
         <span class="feat-rule" style="background:rgba(129,140,248,0.08);color:#818cf8;border-color:rgba(129,140,248,0.2);">Live Map</span>
       </div>
-      <div class="feat-card" style="--feat-color:var(--green)">
-        <div class="feat-icon">&#x1F512;</div>
+      <div class="feat-card" style="--feat-color:var(--green);--feat-icon-bg:rgba(0,230,118,0.07);--feat-icon-border:rgba(0,230,118,0.2);">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <div class="feat-title">DMARC / SPF / DKIM</div>
         <div class="feat-desc">Full authentication header validation. Catches bypass attempts, missing headers, and policy failures.</div>
         <span class="feat-rule" style="background:rgba(0,230,118,0.08);color:var(--green);border-color:rgba(0,230,118,0.2);">Auth Checks</span>
       </div>
-      <div class="feat-card" style="--feat-color:var(--amber)">
-        <div class="feat-icon">&#x1F575;&#xFE0F;</div>
+      <div class="feat-card" style="--feat-color:var(--amber);--feat-icon-bg:rgba(255,171,0,0.07);--feat-icon-border:rgba(255,171,0,0.2);">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#ffab00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
         <div class="feat-title">Display Name Spoofing</div>
         <div class="feat-desc">Detects the right name from the wrong address. Catches executive impersonation against your Roster.</div>
         <span class="feat-rule" style="background:rgba(255,171,0,0.08);color:var(--amber);border-color:rgba(255,171,0,0.2);">ROSTER-001</span>
       </div>
-      <div class="feat-card" style="--feat-color:var(--red)">
-        <div class="feat-icon">&#x26A0;&#xFE0F;</div>
+      <div class="feat-card" style="--feat-color:var(--red);--feat-icon-bg:rgba(255,23,68,0.07);--feat-icon-border:rgba(255,23,68,0.2);">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#ff1744" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
         <div class="feat-title">Lookalike Domains</div>
         <div class="feat-desc">Typosquats, Punycode, homograph attacks. Flags domains that look like yours but are controlled by attackers.</div>
         <span class="feat-rule" style="background:rgba(255,23,68,0.08);color:var(--red);border-color:rgba(255,23,68,0.2);">ROSTER-002</span>
       </div>
-      <div class="feat-card" style="--feat-color:var(--cyan)">
-        <div class="feat-icon">&#x1F9EC;</div>
+      <div class="feat-card" style="--feat-color:var(--cyan);--feat-icon-bg:rgba(0,240,255,0.07);--feat-icon-border:rgba(0,240,255,0.18);">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <div class="feat-title">Threat Intelligence</div>
         <div class="feat-desc">VirusTotal, URLhaus, and Talos lookups on sending domains and IPs. Multi-engine verdict in seconds.</div>
         <span class="feat-rule">Multi-Engine</span>
@@ -799,22 +811,22 @@ footer {
     <p class="section-p" style="max-width:520px;">Your emails never leave your browser. No backend, no accounts, no telemetry of any kind.</p>
     <div class="sec-grid">
       <div class="scard">
-        <div class="scard-icon">&#x1F512;</div>
+        <div class="scard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <div class="scard-title">No Data Upload</div>
         <div class="scard-desc">Every analysis runs locally. Raw email content never reaches any server.</div>
       </div>
       <div class="scard">
-        <div class="scard-icon">&#x1F5DD;&#xFE0F;</div>
+        <div class="scard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
         <div class="scard-title">Keys Stay Local</div>
         <div class="scard-desc">API keys live in your browser only. Never sent anywhere.</div>
       </div>
       <div class="scard">
-        <div class="scard-icon">&#x1F6E1;&#xFE0F;</div>
+        <div class="scard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <div class="scard-title">CSP Headers</div>
         <div class="scard-desc">Strict Content Security Policy on every response. No injection possible.</div>
       </div>
       <div class="scard">
-        <div class="scard-icon">&#x1F441;&#xFE0F;</div>
+        <div class="scard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
         <div class="scard-title">Open Source</div>
         <div class="scard-desc">Every line public on GitHub. Audit, fork, or self-host. Apache 2.0.</div>
       </div>
@@ -841,13 +853,14 @@ footer {
 <!-- FOOTER -->
 <footer>
   <div class="fl">
-    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M16 4L27 9V17C27 23 22 27.5 16 29C10 27.5 5 23 5 17V9L16 4Z" stroke="#00f0ff" stroke-width="1.5" stroke-linejoin="round"/>
         <path d="M11 16.5L14.5 20L21 13" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
+      <span style="font-size:13px;font-weight:900;letter-spacing:0.1em;color:var(--text2);text-transform:uppercase;">ROSTER</span>
     </a>
-    <span class="fc">&copy; 2025 ROSTER &middot; Apache 2.0</span>
+    <span class="fc">&middot; &copy; 2025 &middot; Apache 2.0</span>
   </div>
   <div class="flinks">
     <a href="/app">Console</a>
