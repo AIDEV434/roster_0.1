@@ -989,19 +989,6 @@ code {
 .rule-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text-2); }
 .rule-table td:first-child { color: var(--primary); width: 100px; font-weight: 600; background: var(--surface); }
 
-/* ─── RULES SPLIT LAYOUT ─── */
-.rules-main-col {
-  flex: 1; overflow-y: auto; padding: 0;
-  min-width: 0;
-}
-.rules-chat-col {
-  width: 320px; min-width: 320px; flex-shrink: 0;
-  border-left: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  height: 100%; overflow: hidden;
-  background: var(--bg);
-}
-
 /* ─── AI CHAT ─── */
 .ai-chat-wrap {
   display: flex; flex-direction: column; height: 100%;
@@ -2021,6 +2008,13 @@ code {
       <span class="label-text">About</span>
       <span class="num">05</span>
     </button>
+    <button class="tab" data-panel="ai-chat">
+      <span class="nav-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>
+      </span>
+      <span class="label-text">AI Assistant</span>
+      <span class="num">06</span>
+    </button>
   </nav>
 
   <div class="sidebar-footer">
@@ -2395,9 +2389,8 @@ To extract the raw source:
 </section>
 
 <!-- PANEL: RULES -->
-<section class="panel" id="panel-rules" style="display:flex;flex-direction:row;overflow:hidden;padding:0;">
+<section class="panel" id="panel-rules">
 
-  <div class="rules-main-col">
   <div class="section-h">
     <span class="marker">05</span>
     <h2>Detection Rules</h2>
@@ -2516,37 +2509,47 @@ To extract the raw source:
       <button class="btn danger-ghost" onclick="clearAllCustomRules()">Clear All Custom Rules</button>
     </div>
   </div>
-  </div><!-- end .rules-main-col -->
 
-  <!-- AI CHAT SIDEBAR -->
-  <div class="rules-chat-col">
-    <div class="ai-chat-wrap">
-      <div class="ai-chat-header">
-        <div class="ai-chat-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          AI Assistant
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span id="chat-provider-label" style="font-size:10px;color:var(--text-3);font-family:var(--font-mono);"></span>
-          <button class="btn ghost" id="chat-clear-btn" style="padding:3px 8px;font-size:11px;">Clear</button>
-        </div>
+</section>
+
+<!-- PANEL: AI CHAT -->
+<section class="panel" id="panel-ai-chat" style="padding:0;height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;overflow:hidden;">
+
+  <div class="ai-chat-wrap">
+    <div class="ai-chat-header">
+      <div class="ai-chat-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        ROSTER AI
+        <span id="chat-provider-label" style="font-size:11px;font-weight:400;color:var(--text-3);font-family:var(--font-mono);margin-left:4px;"></span>
       </div>
-
-      <div class="ai-chat-no-key" id="chat-no-key">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-        <div style="font-weight:700;color:var(--text-1);margin-bottom:6px;font-size:13px;">No AI key configured</div>
-        <div style="font-size:12px;color:var(--text-2);margin-bottom:14px;text-align:center;">Groq and Gemini are free.</div>
-        <button class="btn primary" id="chat-setup-ai-btn" style="font-size:12px;padding:7px 16px;">Open AI Setup</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="chat-clear-btn" class="btn ghost" style="font-size:11px;padding:4px 10px;">Clear</button>
       </div>
+    </div>
 
-      <div class="ai-chat-messages" id="chat-messages"></div>
+    <!-- context bar shows when a rule or analysis is loaded -->
+    <div class="chat-context-bar" id="chat-context-bar" style="display:none;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="chat-context-text">Context loaded</span>
+    </div>
 
-      <div class="ai-chat-input-row">
-        <textarea id="chat-input" class="ai-chat-input" placeholder="Ask about BEC, explain a rule, get advice…" rows="1"></textarea>
-        <button class="ai-chat-send" id="chat-send-btn" title="Send">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
+    <!-- no-key state -->
+    <div class="ai-chat-no-key" id="chat-no-key">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <p style="font-weight:600;color:var(--text-1);">AI Assistant unavailable</p>
+      <p style="font-size:12px;max-width:280px;">The ROSTER AI proxy isn't reachable. You can configure your own API key below as a fallback.</p>
+      <button id="chat-setup-ai-btn" class="btn primary" style="margin-top:8px;">Configure AI Provider</button>
+    </div>
+
+    <!-- messages -->
+    <div class="ai-chat-messages" id="chat-messages"></div>
+
+    <!-- input -->
+    <div class="ai-chat-input-row">
+      <textarea id="chat-input" class="ai-chat-input" rows="1" placeholder="Ask ROSTER AI about BEC attacks, your analysis, or custom detection rules…"></textarea>
+      <button id="chat-send-btn" class="ai-chat-send" title="Send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
   </div>
 
@@ -2556,7 +2559,7 @@ To extract the raw source:
 <section class="panel" id="panel-about">
 
   <div class="section-h">
-    <span class="marker">06</span>
+    <span class="marker">07</span>
     <h2>About ROSTER</h2>
     <div class="meta"></div>
     <span class="right">v0.3 · Apache-2.0</span>
@@ -5808,23 +5811,40 @@ Default dmarc_required to true. Infer domains from email addresses if not stated
   const noKeyEl     = document.getElementById('chat-no-key');
   const providerLbl = document.getElementById('chat-provider-label');
   const setupAiBtn  = document.getElementById('chat-setup-ai-btn');
+  const ctxBar      = document.getElementById('chat-context-bar');
+  const ctxText     = document.getElementById('chat-context-text');
 
   let chatHistory = []; // {role, content}
   let isThinking  = false;
+  let usingProxy  = false;
 
-  // ── Detect configured provider ───────────────────────────────────────────
+  // ── Proxy check ──────────────────────────────────────────────────────────
+  // Returns true if /api/chat is reachable (Vercel deployment)
+  async function proxyAvailable() {
+    try {
+      const r = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'ping' }], max_tokens: 1 })
+      });
+      // 200 or any non-network error means the endpoint exists
+      return r.status !== 404 && r.status !== 0;
+    } catch { return false; }
+  }
+
+  // ── Detect user-configured provider (fallback) ───────────────────────────
   function getActiveProvider() {
     const order = ['groq','gemini','openai','claude','custom'];
     for (const id of order) {
       const p = window.PROVIDERS?.[id];
       if (!p) continue;
       try {
-        const key = localStorage.getItem(p.keyPref) || '';
         if (id === 'custom') {
           const url = localStorage.getItem('roster:ai-custom-url') || '';
           if (url) return { id, p };
-        } else if (key) {
-          return { id, p };
+        } else {
+          const key = localStorage.getItem(p.keyPref) || '';
+          if (key) return { id, p };
         }
       } catch {}
     }
@@ -5849,7 +5869,15 @@ Default dmarc_required to true. Infer domains from email addresses if not stated
     try {
       const rep = window._reportState;
       if (rep?.score?.total != null) {
-        analysisCtx = `\n\nLast Analysis:\nFrom: ${rep.email?.from||'unknown'}\nSubject: ${rep.email?.subject||'unknown'}\nRisk Score: ${rep.score.total}/100 (${rep.score.label})\nFindings: ${(rep.findings||[]).map(f=>f.title).join(', ')||'none'}`;
+        analysisCtx = `\n\nLast Email Analysis:\nFrom: ${rep.email?.from||'unknown'}\nSubject: ${rep.email?.subject||'unknown'}\nRisk Score: ${rep.score.total}/100 (${rep.score.label})\nFindings: ${(rep.findings||[]).map(f=>f.title).join(', ')||'none'}`;
+      }
+    } catch {}
+
+    let rulesCtx = '';
+    try {
+      const rules = JSON.parse(localStorage.getItem('roster:custom-rules') || '[]');
+      if (rules.length) {
+        rulesCtx = `\n\nCustom Detection Rules (user-defined):\n${rules.map((r,i)=>`${i+1}. [${r.id||'CUSTOM'}] ${r.name||'Unnamed'}: ${r.description||''} (severity: ${r.severity||'medium'}, enabled: ${r.enabled!==false})`).join('\n')}`;
       }
     } catch {}
 
@@ -5859,19 +5887,103 @@ You help security analysts and business owners:
 - Understand and configure their Trust Roster (company profile with people, domains, roles)
 - Interpret email analysis results, risk scores, and findings
 - Learn about BEC attacks, phishing, display-name spoofing, DMARC, SPF, DKIM
-- Get actionable advice on protecting their organisation
+- Create and refine custom detection rules
+- Give actionable advice on protecting their organisation
 
-Be concise, direct, and practical. Use security expertise. When explaining technical topics, be clear and jargon-free.${rosterCtx}${analysisCtx}`;
+IMPORTANT — Custom Detection Rules:
+When the user asks you to create or suggest a detection rule, output it as a JSON block in this exact format so they can add it with one click:
+\`\`\`rule
+{
+  "id": "CUSTOM-XXX",
+  "name": "Rule Name",
+  "description": "What this rule detects",
+  "severity": "critical|high|medium|low",
+  "enabled": true,
+  "condition": "plain-English description of when to fire this rule"
+}
+\`\`\`
+
+Be concise, direct, and practical. Use security expertise. When explaining technical topics, be clear and jargon-free.${rosterCtx}${analysisCtx}${rulesCtx}`;
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────
+  // ── Update context bar ───────────────────────────────────────────────────
+  function updateContextBar() {
+    const parts = [];
+    try {
+      const r = JSON.parse(localStorage.getItem('roster:config:v1') || '{}');
+      if (r.organization?.name) parts.push(`Roster: ${r.organization.name}`);
+    } catch {}
+    try {
+      const rep = window._reportState;
+      if (rep?.score?.total != null) parts.push(`Last analysis: ${rep.score.total}/100`);
+    } catch {}
+    try {
+      const rules = JSON.parse(localStorage.getItem('roster:custom-rules') || '[]');
+      if (rules.length) parts.push(`${rules.length} custom rule${rules.length>1?'s':''}`);
+    } catch {}
+    if (parts.length) {
+      ctxBar.style.display = 'flex';
+      ctxText.textContent = parts.join(' · ');
+    } else {
+      ctxBar.style.display = 'none';
+    }
+  }
+
+  // ── Render helpers ───────────────────────────────────────────────────────
+  function escapeHtml(t) {
+    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Parse AI reply: render rule blocks with an "Add Rule" button
+  function renderAiContent(content) {
+    const ruleBlockRe = /```rule\s*([\s\S]*?)```/g;
+    let html = '';
+    let last = 0;
+    let match;
+    while ((match = ruleBlockRe.exec(content)) !== null) {
+      // text before the block
+      const before = content.slice(last, match.index);
+      if (before) html += `<span>${escapeHtml(before)}</span>`;
+      // parse the rule JSON
+      let ruleJson = null;
+      try { ruleJson = JSON.parse(match[1].trim()); } catch {}
+      if (ruleJson) {
+        const safe = escapeHtml(JSON.stringify(ruleJson));
+        html += `<div style="margin:10px 0;background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.25);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:11px;font-family:var(--font-mono);color:var(--primary-light);margin-bottom:6px;">Detection Rule · ${escapeHtml(ruleJson.id||'CUSTOM')}</div>
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px;">${escapeHtml(ruleJson.name||'')}</div>
+          <div style="font-size:12px;color:var(--text-2);margin-bottom:8px;">${escapeHtml(ruleJson.description||'')}</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:4px;background:var(--bg);border:1px solid var(--border);">severity: ${escapeHtml(ruleJson.severity||'medium')}</span>
+            <button onclick='addRuleFromChat(${safe})' style="font-size:11px;padding:4px 12px;border-radius:6px;border:none;background:var(--primary);color:#fff;cursor:pointer;font-weight:600;">+ Add Rule</button>
+          </div>
+        </div>`;
+      } else {
+        html += `<pre style="font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;overflow-x:auto;">${escapeHtml(match[1])}</pre>`;
+      }
+      last = match.index + match[0].length;
+    }
+    const rest = content.slice(last);
+    if (rest) html += `<span>${escapeHtml(rest)}</span>`;
+    return html || escapeHtml(content);
+  }
+
   function addBubble(role, content) {
     const wrap = document.createElement('div');
     wrap.className = `chat-bubble ${role}`;
     const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-    wrap.innerHTML = `
-      <div class="chat-bubble-inner">${escapeHtml(content)}</div>
-      <div class="chat-bubble-meta">${role === 'user' ? 'You' : 'ROSTER AI'} · ${now}</div>`;
+    const inner = document.createElement('div');
+    inner.className = 'chat-bubble-inner';
+    if (role === 'ai') {
+      inner.innerHTML = renderAiContent(content);
+    } else {
+      inner.textContent = content;
+    }
+    const meta = document.createElement('div');
+    meta.className = 'chat-bubble-meta';
+    meta.textContent = `${role === 'user' ? 'You' : 'ROSTER AI'} · ${now}`;
+    wrap.appendChild(inner);
+    wrap.appendChild(meta);
     messagesEl.appendChild(wrap);
     messagesEl.scrollTop = messagesEl.scrollHeight;
     return wrap;
@@ -5887,34 +5999,114 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
     return el;
   }
 
-  function escapeHtml(t) {
-    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
   function addWelcome() {
     const el = document.createElement('div');
     el.className = 'chat-bubble ai';
-    el.innerHTML = `<div class="chat-bubble-inner">Hi! I'm your ROSTER AI assistant.
+    const badge = usingProxy
+      ? `<span style="font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:4px;background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);">proxy · no key needed</span>`
+      : `<span style="font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:4px;background:rgba(79,70,229,0.1);color:var(--primary-light);border:1px solid rgba(79,70,229,0.2);">${providerLbl.textContent||'configured'}</span>`;
+    el.innerHTML = `<div class="chat-bubble-inner">Hi! I'm your ROSTER AI assistant. ${badge}
 
 I can help you:
-• Explain any analysis result or risk score
+• Explain any email analysis result or risk score
+• Help you build custom detection rules — just ask and I'll generate one you can add in one click
+• Answer BEC, phishing, DMARC/SPF/DKIM questions
 • Configure your Trust Roster
-• Answer questions about BEC, phishing, DMARC/SPF/DKIM
-• Give advice on protecting your organisation
 
 What do you need?</div>
       <div class="chat-bubble-meta">ROSTER AI</div>`;
     messagesEl.appendChild(el);
   }
 
-  // ── Send ─────────────────────────────────────────────────────────────────
+  // ── Global: add rule from chat button ────────────────────────────────────
+  window.addRuleFromChat = function(ruleObj) {
+    try {
+      const rules = JSON.parse(localStorage.getItem('roster:custom-rules') || '[]');
+      // avoid duplicates by id
+      if (ruleObj.id && rules.find(r => r.id === ruleObj.id)) {
+        addBubble('ai', `Rule "${ruleObj.id}" already exists in your detection rules.`);
+        return;
+      }
+      rules.push({ ...ruleObj, enabled: true, _added: Date.now() });
+      localStorage.setItem('roster:custom-rules', JSON.stringify(rules));
+      // trigger a re-render if the rules panel has a refresh function
+      if (typeof window.renderCustomRules === 'function') window.renderCustomRules();
+      addBubble('ai', `✓ Rule "${ruleObj.name||ruleObj.id}" added to your custom detection rules. Go to the Detection Rules panel to review or edit it.`);
+      updateContextBar();
+    } catch(e) {
+      addBubble('ai', `Failed to add rule: ${e.message}`);
+    }
+  };
+
+  // ── Send via proxy (primary) ─────────────────────────────────────────────
+  async function sendViaProxy(messages) {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, temperature: 0.7, max_tokens: 1500 })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(()=>({}));
+      throw new Error(e.error || `Proxy error ${res.status}`);
+    }
+    const d = await res.json();
+    return d.choices?.[0]?.message?.content || '';
+  }
+
+  // ── Send via user-configured provider (fallback) ─────────────────────────
+  async function sendViaProvider(active, systemPrompt, messages) {
+    const { id, p } = active;
+    const key = getKey(id, p);
+
+    if (id === 'gemini') {
+      const contents = chatHistory.map(m => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }]
+      }));
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemPrompt }] },
+          contents,
+          generationConfig: { temperature: 0.7, maxOutputTokens: 1500 }
+        })
+      });
+      if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || res.status); }
+      const d = await res.json();
+      return d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } else if (id === 'claude') {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1500, system: systemPrompt, messages })
+      });
+      if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || res.status); }
+      const d = await res.json();
+      return d.content?.[0]?.text || '';
+    } else {
+      const endpoint = id === 'groq'   ? 'https://api.groq.com/openai/v1/chat/completions'
+                     : id === 'openai' ? 'https://api.openai.com/v1/chat/completions'
+                     : (localStorage.getItem('roster:ai-custom-url') || '');
+      const model    = id === 'groq'   ? 'llama-3.3-70b-versatile'
+                     : id === 'openai' ? 'gpt-4o-mini'
+                     : (localStorage.getItem('roster:ai-custom-model') || 'default');
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+        body: JSON.stringify({ model, temperature: 0.7, max_tokens: 1500, messages: [{ role:'system', content: systemPrompt }, ...messages] })
+      });
+      if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || res.status); }
+      const d = await res.json();
+      return d.choices?.[0]?.message?.content || '';
+    }
+  }
+
+  // ── Main send ─────────────────────────────────────────────────────────────
   async function sendMessage() {
     if (isThinking) return;
     const text = inputEl.value.trim();
     if (!text) return;
-
-    const active = getActiveProvider();
-    if (!active) { showNoKey(); return; }
 
     inputEl.value = '';
     inputEl.style.height = 'auto';
@@ -5926,66 +6118,36 @@ What do you need?</div>
     const typing = addTyping();
 
     try {
-      const { id, p } = active;
-      const key = getKey(id, p);
       const systemPrompt = buildSystemPrompt();
-
-      // Build messages array with full history for context
       const messages = chatHistory.map(m => ({ role: m.role === 'ai' ? 'assistant' : m.role, content: m.content }));
 
       let reply = '';
 
-      if (id === 'gemini') {
-        const contents = chatHistory.map(m => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content }]
-        }));
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            system_instruction: { parts: [{ text: systemPrompt }] },
-            contents,
-            generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
-          })
-        });
-        if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || res.status); }
-        const d = await res.json();
-        reply = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      } else if (id === 'claude') {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-          body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1024, system: systemPrompt, messages })
-        });
-        if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || res.status); }
-        const d = await res.json();
-        reply = d.content?.[0]?.text || '';
+      if (usingProxy) {
+        try {
+          reply = await sendViaProxy([{ role: 'system', content: systemPrompt }, ...messages]);
+        } catch (proxyErr) {
+          // proxy failed mid-session — try fallback
+          const active = getActiveProvider();
+          if (active) {
+            reply = await sendViaProvider(active, systemPrompt, messages);
+          } else {
+            throw proxyErr;
+          }
+        }
       } else {
-        // groq, openai, custom — all OpenAI-compatible
-        const endpoint = id === 'groq' ? 'https://api.groq.com/openai/v1/chat/completions'
-                       : id === 'openai' ? 'https://api.openai.com/v1/chat/completions'
-                       : (localStorage.getItem('roster:ai-custom-url') || '');
-        const model    = id === 'groq' ? 'llama-3.3-70b-versatile'
-                       : id === 'openai' ? 'gpt-4o-mini'
-                       : (localStorage.getItem('roster:ai-custom-model') || 'default');
-        const headers  = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` };
-        const res = await fetch(endpoint, {
-          method: 'POST', headers,
-          body: JSON.stringify({ model, temperature: 0.7, max_tokens: 1024, messages: [{ role:'system', content: systemPrompt }, ...messages] })
-        });
-        if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || res.status); }
-        const d = await res.json();
-        reply = d.choices?.[0]?.message?.content || '';
+        const active = getActiveProvider();
+        if (!active) { typing.remove(); showNoKey(); isThinking = false; sendBtn.disabled = false; return; }
+        reply = await sendViaProvider(active, systemPrompt, messages);
       }
 
       typing.remove();
-      if (!reply) throw new Error('Empty response');
+      if (!reply) throw new Error('Empty response from AI');
       chatHistory.push({ role: 'ai', content: reply });
       addBubble('ai', reply);
     } catch (err) {
       typing.remove();
-      addBubble('ai', `Sorry, something went wrong: ${err.message}\n\nCheck your API key in AI Setup.`);
+      addBubble('ai', `Sorry, something went wrong: ${err.message}\n\nIf this keeps happening, configure an API key via AI Setup.`);
     } finally {
       isThinking = false;
       sendBtn.disabled = false;
@@ -5993,7 +6155,7 @@ What do you need?</div>
     }
   }
 
-  // ── No key state ─────────────────────────────────────────────────────────
+  // ── No key / chat state ──────────────────────────────────────────────────
   function showNoKey() {
     noKeyEl.style.display = 'flex';
     messagesEl.style.display = 'none';
@@ -6003,13 +6165,26 @@ What do you need?</div>
     messagesEl.style.display = 'flex';
   }
 
-  function initChat() {
+  async function initChat() {
+    updateContextBar();
+    // Try proxy first
+    const proxOk = await proxyAvailable();
+    if (proxOk) {
+      usingProxy = true;
+      providerLbl.textContent = 'proxy · Groq';
+      showChat();
+      if (messagesEl.children.length === 0) addWelcome();
+      return;
+    }
+    // Fallback to user-configured provider
     const active = getActiveProvider();
     if (active) {
-      showChat();
+      usingProxy = false;
       providerLbl.textContent = active.p.label;
+      showChat();
       if (messagesEl.children.length === 0) addWelcome();
     } else {
+      usingProxy = false;
       showNoKey();
       providerLbl.textContent = '';
     }
@@ -6037,13 +6212,18 @@ What do you need?</div>
     document.getElementById('ai-setup-btn')?.click();
   });
 
-  // Init when rules tab is opened
-  document.querySelectorAll('[data-panel="rules"]').forEach(btn => {
+  // Init when AI chat tab is opened
+  document.querySelectorAll('[data-panel="ai-chat"]').forEach(btn => {
     btn.addEventListener('click', () => setTimeout(initChat, 50));
   });
 
+  // Also re-check context when rules or roster panels are visited (rules may have changed)
+  document.querySelectorAll('[data-panel="rules"],[data-panel="roster"]').forEach(btn => {
+    btn.addEventListener('click', () => setTimeout(updateContextBar, 200));
+  });
+
   // Init on load
-  setTimeout(initChat, 200);
+  setTimeout(initChat, 300);
 })();
 </script>
 </body>
