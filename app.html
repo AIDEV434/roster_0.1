@@ -989,6 +989,19 @@ code {
 .rule-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text-2); }
 .rule-table td:first-child { color: var(--primary); width: 100px; font-weight: 600; background: var(--surface); }
 
+/* ─── RULES SPLIT LAYOUT ─── */
+.rules-main-col {
+  flex: 1; overflow-y: auto; padding: 0;
+  min-width: 0;
+}
+.rules-chat-col {
+  width: 320px; min-width: 320px; flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  height: 100%; overflow: hidden;
+  background: var(--bg);
+}
+
 /* ─── AI CHAT ─── */
 .ai-chat-wrap {
   display: flex; flex-direction: column; height: 100%;
@@ -2008,13 +2021,6 @@ code {
       <span class="label-text">About</span>
       <span class="num">05</span>
     </button>
-    <button class="tab" data-panel="ai-chat">
-      <span class="nav-icon">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>
-      </span>
-      <span class="label-text">AI Assistant</span>
-      <span class="num">06</span>
-    </button>
   </nav>
 
   <div class="sidebar-footer">
@@ -2323,17 +2329,7 @@ To extract the raw source:
         <span class="vt-status" id="ai-key-status">No key</span>
       </div>
 
-      <label>Scrape from URL <span style="font-weight:400;color:var(--text-2);font-size:11px;">(website, LinkedIn, team page)</span></label>
-      <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <input type="url" id="ai-scrape-url" placeholder="https://yourcompany.com/about  or  https://linkedin.com/company/..." style="flex:1;font-family:var(--font-mono);font-size:12px;background:var(--surface);border:1px solid var(--border);color:var(--text-1);padding:8px 10px;border-radius:var(--radius);outline:none;">
-        <button class="btn ghost" id="ai-scrape-btn" style="white-space:nowrap;flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Scrape
-        </button>
-      </div>
-      <div id="ai-scrape-status" style="font-size:11px;color:var(--text-2);margin-bottom:6px;min-height:14px;font-family:var(--font-mono);"></div>
-
-      <label>Organisation info <span style="font-weight:400;color:var(--text-2);font-size:11px;">(or paste manually)</span></label>
+      <label>Organisation info</label>
       <textarea id="ai-org-input" placeholder="e.g.&#10;Company: Acme Corp (acme.com, acme.co.uk)&#10;CEO: John Smith &lt;john@acme.com&gt;&#10;CFO: Sarah Lee &lt;sarah.lee@acme.com&gt;&#10;IT uses Microsoft 365. DMARC enforced.&#10;&#10;Or paste email signatures, org charts, LinkedIn text..."></textarea>
       <div id="ai-preview-box" class="ai-preview-box" style="display:none"></div>
     </div>
@@ -2399,8 +2395,9 @@ To extract the raw source:
 </section>
 
 <!-- PANEL: RULES -->
-<section class="panel" id="panel-rules">
+<section class="panel" id="panel-rules" style="display:flex;flex-direction:row;overflow:hidden;padding:0;">
 
+  <div class="rules-main-col">
   <div class="section-h">
     <span class="marker">05</span>
     <h2>Detection Rules</h2>
@@ -2519,6 +2516,39 @@ To extract the raw source:
       <button class="btn danger-ghost" onclick="clearAllCustomRules()">Clear All Custom Rules</button>
     </div>
   </div>
+  </div><!-- end .rules-main-col -->
+
+  <!-- AI CHAT SIDEBAR -->
+  <div class="rules-chat-col">
+    <div class="ai-chat-wrap">
+      <div class="ai-chat-header">
+        <div class="ai-chat-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          AI Assistant
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="chat-provider-label" style="font-size:10px;color:var(--text-3);font-family:var(--font-mono);"></span>
+          <button class="btn ghost" id="chat-clear-btn" style="padding:3px 8px;font-size:11px;">Clear</button>
+        </div>
+      </div>
+
+      <div class="ai-chat-no-key" id="chat-no-key">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <div style="font-weight:700;color:var(--text-1);margin-bottom:6px;font-size:13px;">No AI key configured</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:14px;text-align:center;">Groq and Gemini are free.</div>
+        <button class="btn primary" id="chat-setup-ai-btn" style="font-size:12px;padding:7px 16px;">Open AI Setup</button>
+      </div>
+
+      <div class="ai-chat-messages" id="chat-messages"></div>
+
+      <div class="ai-chat-input-row">
+        <textarea id="chat-input" class="ai-chat-input" placeholder="Ask about BEC, explain a rule, get advice…" rows="1"></textarea>
+        <button class="ai-chat-send" id="chat-send-btn" title="Send">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
 
 </section>
 
@@ -2586,38 +2616,6 @@ To extract the raw source:
     </div>
   </div>
 
-</section>
-
-<!-- PANEL: AI CHAT -->
-<section class="panel" id="panel-ai-chat">
-  <div class="ai-chat-wrap">
-    <div class="ai-chat-header">
-      <div class="ai-chat-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        AI Assistant
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span id="chat-provider-label" style="font-size:11px;color:var(--text-2);font-family:var(--font-mono);"></span>
-        <button class="btn ghost" id="chat-clear-btn" style="padding:4px 10px;font-size:11px;">Clear</button>
-      </div>
-    </div>
-
-    <div class="ai-chat-no-key" id="chat-no-key">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-      <div style="font-weight:700;color:var(--text-1);margin-bottom:6px;">No AI provider configured</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Set up a free API key to start chatting. Groq and Gemini are free.</div>
-      <button class="btn primary" id="chat-setup-ai-btn">Open AI Setup</button>
-    </div>
-
-    <div class="ai-chat-messages" id="chat-messages"></div>
-
-    <div class="ai-chat-input-row">
-      <textarea id="chat-input" class="ai-chat-input" placeholder="Ask anything — explain a result, configure your roster, ask about BEC threats…" rows="1"></textarea>
-      <button class="ai-chat-send" id="chat-send-btn" title="Send">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
-  </div>
 </section>
 
 <!-- Footer -->
@@ -5698,56 +5696,6 @@ Default dmarc_required to true. Infer domains from email addresses if not stated
     }
     function closeModal() { overlay.style.display = 'none'; }
 
-    // ── URL scraper ──────────────────────────────────────────────────────────
-    document.getElementById('ai-scrape-btn').addEventListener('click', async () => {
-      const urlInput = document.getElementById('ai-scrape-url');
-      const scrapeStatus = document.getElementById('ai-scrape-status');
-      const url = urlInput.value.trim();
-
-      if (!url) { scrapeStatus.textContent = 'Paste a URL first.'; return; }
-      let parsed;
-      try { parsed = new URL(url); } catch { scrapeStatus.textContent = 'Invalid URL.'; return; }
-      if (!['http:', 'https:'].includes(parsed.protocol)) { scrapeStatus.textContent = 'Must be http or https.'; return; }
-
-      const btn = document.getElementById('ai-scrape-btn');
-      btn.disabled = true;
-      scrapeStatus.textContent = 'Fetching page…';
-
-      try {
-        // Use allorigins CORS proxy
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-        const res = await fetch(proxyUrl);
-        if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
-        const data = await res.json();
-        const html = data.contents || '';
-        if (!html) throw new Error('Empty response from page.');
-
-        // Strip HTML → clean text
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html
-          .replace(/<script[\s\S]*?<\/script>/gi, '')
-          .replace(/<style[\s\S]*?<\/style>/gi, '')
-          .replace(/<nav[\s\S]*?<\/nav>/gi, '')
-          .replace(/<footer[\s\S]*?<\/footer>/gi, '')
-          .replace(/<header[\s\S]*?<\/header>/gi, '');
-        const text = (tmp.textContent || tmp.innerText || '')
-          .replace(/\s{3,}/g, '\n\n')
-          .trim()
-          .slice(0, 8000); // cap at 8k chars for AI token limit
-
-        if (text.length < 50) throw new Error('Could not extract readable text from this page.');
-
-        orgInput.value = text;
-        scrapeStatus.textContent = `Done — ${text.length} characters extracted. Review then click Generate Roster.`;
-        scrapeStatus.style.color = 'var(--green)';
-      } catch (err) {
-        scrapeStatus.textContent = `Failed: ${err.message}`;
-        scrapeStatus.style.color = 'var(--red)';
-      } finally {
-        btn.disabled = false;
-      }
-    });
-
     document.getElementById('ai-setup-btn').addEventListener('click', openModal);
     document.getElementById('ai-modal-close').addEventListener('click', closeModal);
     document.getElementById('ai-modal-cancel').addEventListener('click', closeModal);
@@ -6089,13 +6037,13 @@ What do you need?</div>
     document.getElementById('ai-setup-btn')?.click();
   });
 
-  // Re-init whenever user switches to this tab
-  document.querySelectorAll('[data-panel="ai-chat"]').forEach(btn => {
+  // Init when rules tab is opened
+  document.querySelectorAll('[data-panel="rules"]').forEach(btn => {
     btn.addEventListener('click', () => setTimeout(initChat, 50));
   });
 
-  // Also init immediately if already on tab
-  if (document.getElementById('panel-ai-chat')?.style.display !== 'none') initChat();
+  // Init on load
+  setTimeout(initChat, 200);
 })();
 </script>
 </body>
