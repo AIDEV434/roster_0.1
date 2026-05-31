@@ -994,10 +994,17 @@ code {
   display: flex !important;
   flex-direction: column;
   height: calc(100vh - var(--nav-h));
+  max-height: calc(100vh - var(--nav-h));
 }
 .ai-chat-wrap {
-  display: flex; flex-direction: column; height: 100%;
+  display: flex; flex-direction: column;
+  flex: 1; min-height: 0;
   background: var(--surface); overflow: hidden;
+}
+.ai-chat-messages {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
 }
 .ai-chat-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -5895,18 +5902,22 @@ You help security analysts and business owners:
 - Create and refine custom detection rules
 - Give actionable advice on protecting their organisation
 
-IMPORTANT — Custom Detection Rules:
-When the user asks you to create or suggest a detection rule, output it as a JSON block in this exact format so they can add it with one click:
+CUSTOM DETECTION RULES — STRICT FORMAT:
+Whenever the user asks you to create, suggest, write, or add a detection rule, you MUST output it as a JSON block using EXACTLY this format — no exceptions, no plain text alternatives:
 \`\`\`rule
 {
-  "id": "CUSTOM-XXX",
-  "name": "Rule Name",
-  "description": "What this rule detects",
-  "severity": "critical|high|medium|low",
+  "id": "CUSTOM-001",
+  "name": "Short rule name",
+  "description": "One sentence describing what this rule detects",
+  "severity": "critical",
   "enabled": true,
-  "condition": "plain-English description of when to fire this rule"
+  "condition": "Plain-English description of when this rule fires"
 }
 \`\`\`
+Choose severity from: critical, high, medium, low.
+Increment the ID number for each new rule (CUSTOM-001, CUSTOM-002, etc.).
+Never describe a rule in paragraph form — always use the JSON block above.
+After outputting the block, tell the user they can say "add the rule" to save it.
 
 Be concise, direct, and practical. Use security expertise. When explaining technical topics, be clear and jargon-free.${rosterCtx}${analysisCtx}${rulesCtx}`;
   }
@@ -5973,6 +5984,12 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
     return html || `<span style="color:var(--text-1);white-space:pre-wrap;">${escapeHtml(content)}</span>`;
   }
 
+  function scrollToBottom() {
+    requestAnimationFrame(() => {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    });
+  }
+
   function addBubble(role, content) {
     const wrap = document.createElement('div');
     wrap.className = `chat-bubble ${role}`;
@@ -5990,7 +6007,7 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
     wrap.appendChild(inner);
     wrap.appendChild(meta);
     messagesEl.appendChild(wrap);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    scrollToBottom();
     return wrap;
   }
 
@@ -6000,7 +6017,7 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
     el.id = 'chat-typing';
     el.innerHTML = `<div class="chat-typing"><span></span><span></span><span></span></div>`;
     messagesEl.appendChild(el);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    scrollToBottom();
     return el;
   }
 
