@@ -6007,10 +6007,7 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
   function addWelcome() {
     const el = document.createElement('div');
     el.className = 'chat-bubble ai';
-    const badge = usingProxy
-      ? `<span style="font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:4px;background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);">proxy · no key needed</span>`
-      : `<span style="font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:4px;background:rgba(79,70,229,0.1);color:var(--primary-light);border:1px solid rgba(79,70,229,0.2);">${providerLbl.textContent||'configured'}</span>`;
-    el.innerHTML = `<div class="chat-bubble-inner">Hi! I'm your ROSTER AI assistant. ${badge}
+    el.innerHTML = `<div class="chat-bubble-inner">Hi! I'm your ROSTER AI assistant.
 
 I can help you:
 • Explain any email analysis result or risk score
@@ -6182,7 +6179,7 @@ What do you need?</div>
     const proxOk = await proxyAvailable();
     if (proxOk) {
       usingProxy = true;
-      providerLbl.textContent = 'proxy · Groq';
+      providerLbl.textContent = '';
       showChat();
       addWelcome();
       return;
@@ -6191,7 +6188,7 @@ What do you need?</div>
     const active = getActiveProvider();
     if (active) {
       usingProxy = false;
-      providerLbl.textContent = active.p.label;
+      providerLbl.textContent = '';
       showChat();
       addWelcome();
     } else {
