@@ -2583,25 +2583,42 @@ To extract the raw source:
       <div class="ai-chat-title">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         ROSTER AI
-        <span id="chat-provider-label" style="font-size:11px;font-weight:400;color:var(--text-3);font-family:var(--font-mono);margin-left:4px;"></span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button id="chat-clear-btn" style="font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid rgba(0,240,255,0.2);background:rgba(0,240,255,0.06);color:rgba(0,240,255,0.6);cursor:pointer;font-family:var(--font-mono);letter-spacing:0.06em;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,240,255,0.4)';this.style.color='#00f0ff'" onmouseout="this.style.borderColor='rgba(0,240,255,0.2)';this.style.color='rgba(0,240,255,0.6)'">CLEAR</button>
+      <!-- Mode toggle -->
+      <div id="chat-mode-toggle" style="display:flex;align-items:center;gap:4px;background:rgba(0,0,0,0.4);border:1px solid rgba(0,240,255,0.15);border-radius:8px;padding:3px;">
+        <button id="mode-btn-roster" onclick="setChatMode('roster')" style="font-size:10px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font-mono);letter-spacing:0.05em;transition:all 0.2s;background:rgba(0,240,255,0.15);color:#00f0ff;">ROSTER AI</button>
+        <button id="mode-btn-own" onclick="setChatMode('own')" style="font-size:10px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font-mono);letter-spacing:0.05em;transition:all 0.2s;background:transparent;color:rgba(0,240,255,0.4);">MY OWN</button>
       </div>
+      <button id="chat-clear-btn" style="font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid rgba(0,240,255,0.2);background:rgba(0,240,255,0.06);color:rgba(0,240,255,0.6);cursor:pointer;font-family:var(--font-mono);letter-spacing:0.06em;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,240,255,0.4)';this.style.color='#00f0ff'" onmouseout="this.style.borderColor='rgba(0,240,255,0.2)';this.style.color='rgba(0,240,255,0.6)'">CLEAR</button>
     </div>
 
-    <!-- context bar shows when a rule or analysis is loaded -->
+    <!-- "My Own" key entry panel -->
+    <div id="chat-own-config" style="display:none;padding:16px 24px;border-bottom:1px solid rgba(0,240,255,0.1);background:rgba(0,0,0,0.3);flex-shrink:0;">
+      <div style="font-size:11px;color:rgba(0,240,255,0.6);font-family:var(--font-mono);margin-bottom:10px;letter-spacing:0.06em;">CONFIGURE YOUR OWN KEY</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <select id="own-provider-select" style="background:#0a0d12;border:1px solid rgba(0,240,255,0.2);color:#fff;font-family:var(--font-mono);font-size:11px;padding:6px 10px;border-radius:6px;outline:none;cursor:pointer;">
+          <option value="groq">Groq / Llama 3 (Free)</option>
+          <option value="openai">OpenAI GPT-4o</option>
+          <option value="gemini">Gemini Flash (Free)</option>
+          <option value="claude">Claude</option>
+        </select>
+        <input id="own-api-key-input" type="password" placeholder="Paste your API key…" style="flex:1;background:#0a0d12;border:1px solid rgba(0,240,255,0.2);color:#fff;font-family:var(--font-mono);font-size:11px;padding:6px 12px;border-radius:6px;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(0,240,255,0.5)'" onblur="this.style.borderColor='rgba(0,240,255,0.2)'"/>
+        <button onclick="saveOwnKey()" style="font-size:11px;padding:6px 14px;border-radius:6px;border:none;background:rgba(0,240,255,0.15);border:1px solid rgba(0,240,255,0.3);color:#00f0ff;cursor:pointer;font-family:var(--font-mono);white-space:nowrap;">Save</button>
+      </div>
+      <div id="own-key-status" style="font-size:10px;font-family:var(--font-mono);color:rgba(0,240,255,0.4);"></div>
+    </div>
+
+    <!-- context bar -->
     <div class="chat-context-bar" id="chat-context-bar" style="display:none;">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <span id="chat-context-text">Context loaded</span>
     </div>
 
-    <!-- no-key state -->
-    <div class="ai-chat-no-key" id="chat-no-key">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <p style="font-weight:600;color:var(--text-1);">AI Assistant unavailable</p>
-      <p style="font-size:12px;max-width:280px;">The ROSTER AI proxy isn't reachable. You can configure your own API key below as a fallback.</p>
-      <button id="chat-setup-ai-btn" class="btn primary" style="margin-top:8px;">Configure AI Provider</button>
+    <!-- no-key state (only for own mode with no key saved) -->
+    <div class="ai-chat-no-key" id="chat-no-key" style="display:none;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(0,240,255,0.3)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <p style="font-weight:600;color:#fff;">No API key saved</p>
+      <p style="font-size:12px;max-width:260px;color:rgba(255,255,255,0.5);">Enter your API key above to use your own provider, or switch back to ROSTER AI.</p>
     </div>
 
     <!-- messages -->
@@ -5871,14 +5888,78 @@ Default dmarc_required to true. Infer domains from email addresses if not stated
   const inputEl     = document.getElementById('chat-input');
   const sendBtn     = document.getElementById('chat-send-btn');
   const noKeyEl     = document.getElementById('chat-no-key');
-  const providerLbl = document.getElementById('chat-provider-label');
-  const setupAiBtn  = document.getElementById('chat-setup-ai-btn');
   const ctxBar      = document.getElementById('chat-context-bar');
   const ctxText     = document.getElementById('chat-context-text');
 
-  let chatHistory = []; // {role, content}
+  let chatHistory = [];
   let isThinking  = false;
   let usingProxy  = false;
+  let chatMode    = 'roster'; // 'roster' | 'own'
+
+  const OWN_KEY_STORAGE = 'roster:own-ai-key';
+  const OWN_PROVIDER_STORAGE = 'roster:own-ai-provider';
+
+  // ── Mode switching ───────────────────────────────────────────────────────
+  window.setChatMode = function(mode) {
+    chatMode = mode;
+    const rosterBtn = document.getElementById('mode-btn-roster');
+    const ownBtn    = document.getElementById('mode-btn-own');
+    const ownConfig = document.getElementById('chat-own-config');
+    const active    = 'background:rgba(0,240,255,0.15);color:#00f0ff;';
+    const inactive  = 'background:transparent;color:rgba(0,240,255,0.4);';
+    if (mode === 'roster') {
+      rosterBtn.style.cssText += active;
+      ownBtn.style.cssText    += inactive;
+      ownConfig.style.display  = 'none';
+      noKeyEl.style.display    = 'none';
+      messagesEl.style.display = 'flex';
+    } else {
+      ownBtn.style.cssText    += active;
+      rosterBtn.style.cssText += inactive;
+      ownConfig.style.display  = 'block';
+      // load saved key/provider
+      const savedKey      = localStorage.getItem(OWN_KEY_STORAGE) || '';
+      const savedProvider = localStorage.getItem(OWN_PROVIDER_STORAGE) || 'groq';
+      const keyInput      = document.getElementById('own-api-key-input');
+      const provSelect    = document.getElementById('own-provider-select');
+      if (keyInput) keyInput.value = savedKey;
+      if (provSelect) provSelect.value = savedProvider;
+      updateOwnKeyStatus();
+      if (!savedKey) {
+        noKeyEl.style.display    = 'flex';
+        messagesEl.style.display = 'none';
+      } else {
+        noKeyEl.style.display    = 'none';
+        messagesEl.style.display = 'flex';
+      }
+    }
+  };
+
+  window.saveOwnKey = function() {
+    const key      = (document.getElementById('own-api-key-input')?.value || '').trim();
+    const provider = document.getElementById('own-provider-select')?.value || 'groq';
+    if (!key) { updateOwnKeyStatus('Enter a key first', false); return; }
+    localStorage.setItem(OWN_KEY_STORAGE, key);
+    localStorage.setItem(OWN_PROVIDER_STORAGE, provider);
+    updateOwnKeyStatus('Key saved ✓', true);
+    noKeyEl.style.display    = 'none';
+    messagesEl.style.display = 'flex';
+    if (messagesEl.children.length === 0) addWelcome();
+  };
+
+  function updateOwnKeyStatus(msg, ok) {
+    const el = document.getElementById('own-key-status');
+    if (!el) return;
+    if (msg !== undefined) {
+      el.textContent = msg;
+      el.style.color = ok ? '#10b981' : '#ef4444';
+      return;
+    }
+    const key = localStorage.getItem(OWN_KEY_STORAGE) || '';
+    const provider = localStorage.getItem(OWN_PROVIDER_STORAGE) || 'groq';
+    el.textContent = key ? `Key saved · provider: ${provider}` : 'No key saved yet';
+    el.style.color = key ? 'rgba(0,240,255,0.4)' : 'rgba(255,100,100,0.5)';
+  }
 
   // ── Proxy check ──────────────────────────────────────────────────────────
   // Returns true if /api/chat is reachable (Vercel deployment)
@@ -6131,10 +6212,10 @@ What do you need?</div>
     return d.choices?.[0]?.message?.content || '';
   }
 
-  // ── Send via user-configured provider (fallback) ─────────────────────────
-  async function sendViaProvider(active, systemPrompt, messages) {
+  // ── Send via user-configured provider ───────────────────────────────────
+  async function sendViaProvider(active, systemPrompt, messages, keyOverride) {
     const { id, p } = active;
-    const key = getKey(id, p);
+    const key = keyOverride || getKey(id, p);
 
     if (id === 'gemini') {
       const contents = chatHistory.map(m => ({
@@ -6163,12 +6244,15 @@ What do you need?</div>
       const d = await res.json();
       return d.content?.[0]?.text || '';
     } else {
-      const endpoint = id === 'groq'   ? 'https://api.groq.com/openai/v1/chat/completions'
-                     : id === 'openai' ? 'https://api.openai.com/v1/chat/completions'
+      const endpoint = id === 'groq'    ? 'https://api.groq.com/openai/v1/chat/completions'
+                     : id === 'openai'  ? 'https://api.openai.com/v1/chat/completions'
+                     : id === 'gemini'  ? null // handled above
+                     : id === 'claude'  ? null // handled above
                      : (localStorage.getItem('roster:ai-custom-url') || '');
       const model    = id === 'groq'   ? 'llama-3.3-70b-versatile'
                      : id === 'openai' ? 'gpt-4o-mini'
                      : (localStorage.getItem('roster:ai-custom-model') || 'default');
+      if (!endpoint) throw new Error(`Provider "${id}" requires special handling — pick Groq or OpenAI for custom key mode.`);
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
@@ -6238,22 +6322,25 @@ What do you need?</div>
 
       let reply = '';
 
-      if (usingProxy) {
+      if (chatMode === 'own') {
+        // Use user's own key
+        const key      = localStorage.getItem(OWN_KEY_STORAGE) || '';
+        const provider = localStorage.getItem(OWN_PROVIDER_STORAGE) || 'groq';
+        if (!key) {
+          typing.remove();
+          noKeyEl.style.display    = 'flex';
+          messagesEl.style.display = 'none';
+          isThinking = false; sendBtn.disabled = false; return;
+        }
+        const p = window.PROVIDERS?.[provider];
+        reply = await sendViaProvider({ id: provider, p: p || { keyPref: OWN_KEY_STORAGE } }, systemPrompt, messages, key);
+      } else {
+        // ROSTER AI proxy
         try {
           reply = await sendViaProxy([{ role: 'system', content: systemPrompt }, ...messages]);
         } catch (proxyErr) {
-          // proxy failed mid-session — try fallback
-          const active = getActiveProvider();
-          if (active) {
-            reply = await sendViaProvider(active, systemPrompt, messages);
-          } else {
-            throw proxyErr;
-          }
+          throw new Error('ROSTER AI is unavailable. Switch to "My Own" and enter your API key.');
         }
-      } else {
-        const active = getActiveProvider();
-        if (!active) { typing.remove(); showNoKey(); isThinking = false; sendBtn.disabled = false; return; }
-        reply = await sendViaProvider(active, systemPrompt, messages);
       }
 
       typing.remove();
