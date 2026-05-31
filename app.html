@@ -6033,7 +6033,7 @@ What do you need?</div>
       localStorage.setItem('roster:custom-rules', JSON.stringify(rules));
       // trigger a re-render if the rules panel has a refresh function
       if (typeof window.renderCustomRules === 'function') window.renderCustomRules();
-      addBubble('ai', `✓ Rule "${ruleObj.name||ruleObj.id}" added to your custom detection rules. Go to the Detection Rules panel to review or edit it.`);
+      addBubble('ai', `✓ Rule "${ruleObj.name||ruleObj.id}" has been added to your Custom Detection Rules. It will run on your next email analysis.`);
       updateContextBar();
     } catch(e) {
       addBubble('ai', `Failed to add rule: ${e.message}`);
@@ -6104,11 +6104,48 @@ What do you need?</div>
     }
   }
 
+  // ── Extract last rule from AI chat history ───────────────────────────────
+  function getLastSuggestedRule() {
+    const ruleBlockRe = /```rule\s*([\s\S]*?)```/;
+    // scan AI messages in reverse
+    for (let i = chatHistory.length - 1; i >= 0; i--) {
+      if (chatHistory[i].role !== 'ai') continue;
+      const m = ruleBlockRe.exec(chatHistory[i].content);
+      if (m) {
+        try { return JSON.parse(m[1].trim()); } catch {}
+      }
+    }
+    return null;
+  }
+
+  // ── Detect "add the rule" intent ─────────────────────────────────────────
+  function isAddRuleIntent(text) {
+    const t = text.toLowerCase().trim();
+    return /^(yes[\s,!]*)?add (it|the rule|that rule|this rule|that|the detection rule|rule)[\s!.]*$/.test(t)
+        || /^(yes[\s,!]*)?add[\s!.]*$/.test(t)
+        || /^(go ahead|do it|add it now|add the rule now|add that now)[\s!.]*$/.test(t);
+  }
+
   // ── Main send ─────────────────────────────────────────────────────────────
   async function sendMessage() {
     if (isThinking) return;
     const text = inputEl.value.trim();
     if (!text) return;
+
+    // ── Intercept: "add the rule" ──────────────────────────────────────────
+    if (isAddRuleIntent(text)) {
+      const rule = getLastSuggestedRule();
+      inputEl.value = '';
+      inputEl.style.height = 'auto';
+      chatHistory.push({ role: 'user', content: text });
+      addBubble('user', text);
+      if (rule) {
+        addRuleFromChat(rule);
+      } else {
+        addBubble('ai', "I don't have a rule ready to add yet. Ask me to create one first — for example: \"Create a rule to flag emails from free email providers.\"");
+      }
+      return;
+    }
 
     inputEl.value = '';
     inputEl.style.height = 'auto';
