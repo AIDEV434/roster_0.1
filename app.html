@@ -5887,7 +5887,7 @@ Default dmarc_required to true. Infer domains from email addresses if not stated
 
     let rulesCtx = '';
     try {
-      const rules = JSON.parse(localStorage.getItem('roster:custom-rules') || '[]');
+      const rules = JSON.parse(localStorage.getItem('roster:custom-rules:v1') || '[]');
       if (rules.length) {
         rulesCtx = `\n\nCustom Detection Rules (user-defined):\n${rules.map((r,i)=>`${i+1}. [${r.id||'CUSTOM'}] ${r.name||'Unnamed'}: ${r.description||''} (severity: ${r.severity||'medium'}, enabled: ${r.enabled!==false})`).join('\n')}`;
       }
@@ -5934,7 +5934,7 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
       if (rep?.score?.total != null) parts.push(`Last analysis: ${rep.score.total}/100`);
     } catch {}
     try {
-      const rules = JSON.parse(localStorage.getItem('roster:custom-rules') || '[]');
+      const rules = JSON.parse(localStorage.getItem('roster:custom-rules:v1') || '[]');
       if (rules.length) parts.push(`${rules.length} custom rule${rules.length>1?'s':''}`);
     } catch {}
     if (parts.length) {
@@ -5965,14 +5965,11 @@ Be concise, direct, and practical. Use security expertise. When explaining techn
       try { ruleJson = JSON.parse(match[1].trim()); } catch {}
       if (ruleJson) {
         const safe = escapeHtml(JSON.stringify(ruleJson));
-        html += `<div style="margin:10px 0;background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.25);border-radius:10px;padding:12px 14px;">
-          <div style="font-size:11px;font-family:var(--font-mono);color:var(--primary-light);margin-bottom:6px;">Detection Rule · ${escapeHtml(ruleJson.id||'CUSTOM')}</div>
-          <div style="font-weight:600;font-size:13px;margin-bottom:2px;color:var(--text-1);">${escapeHtml(ruleJson.name||'')}</div>
-          <div style="font-size:12px;color:var(--text-2);margin-bottom:8px;">${escapeHtml(ruleJson.description||'')}</div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span style="font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2);">severity: ${escapeHtml(ruleJson.severity||'medium')}</span>
-            <button onclick='addRuleFromChat(${safe})' style="font-size:11px;padding:4px 12px;border-radius:6px;border:none;background:var(--primary);color:#fff;cursor:pointer;font-weight:600;">+ Add Rule</button>
-          </div>
+        html += `<div style="margin:6px 0;background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.25);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--primary-light);flex-shrink:0;">${escapeHtml(ruleJson.id||'CUSTOM')}</span>
+          <span style="font-weight:600;font-size:12px;color:var(--text-1);flex:1;min-width:0;">${escapeHtml(ruleJson.name||'')}</span>
+          <span style="font-size:10px;font-family:var(--font-mono);padding:1px 6px;border-radius:4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2);flex-shrink:0;">${escapeHtml(ruleJson.severity||'medium')}</span>
+          <button onclick='addRuleFromChat(${safe})' style="font-size:11px;padding:3px 10px;border-radius:5px;border:none;background:var(--primary);color:#fff;cursor:pointer;font-weight:600;flex-shrink:0;">+ Add</button>
         </div>`;
       } else {
         html += `<pre style="font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;overflow-x:auto;color:var(--text-1);">${escapeHtml(match[1])}</pre>`;
@@ -6037,20 +6034,32 @@ What do you need?</div>
     messagesEl.appendChild(el);
   }
 
-  // ── Global: add rule from chat button ────────────────────────────────────
+  // ── Global: add rule from chat ────────────────────────────────────────────
   window.addRuleFromChat = function(ruleObj) {
     try {
-      const rules = JSON.parse(localStorage.getItem('roster:custom-rules') || '[]');
+      const KEY = 'roster:custom-rules:v1';
+      const rules = JSON.parse(localStorage.getItem(KEY) || '[]');
       // avoid duplicates by id
       if (ruleObj.id && rules.find(r => r.id === ruleObj.id)) {
-        addBubble('ai', `Rule "${ruleObj.id}" already exists in your detection rules.`);
+        addBubble('ai', `Rule "${ruleObj.id}" is already in your custom detection rules.`);
         return;
       }
-      rules.push({ ...ruleObj, enabled: true, _added: Date.now() });
-      localStorage.setItem('roster:custom-rules', JSON.stringify(rules));
-      // trigger a re-render if the rules panel has a refresh function
-      if (typeof window.renderCustomRules === 'function') window.renderCustomRules();
-      addBubble('ai', `✓ Rule "${ruleObj.name||ruleObj.id}" has been added to your Custom Detection Rules. It will run on your next email analysis.`);
+      // Normalise to the format the rules panel expects
+      const newRule = {
+        id:         ruleObj.id        || `CUSTOM-${String(rules.length + 1).padStart(3,'0')}`,
+        name:       ruleObj.name      || 'Unnamed Rule',
+        description:ruleObj.description || ruleObj.condition || '',
+        severity:   ruleObj.severity  || 'medium',
+        score:      ruleObj.score     || (ruleObj.severity === 'critical' ? 40 : ruleObj.severity === 'high' ? 30 : ruleObj.severity === 'low' ? 5 : 15),
+        enabled:    true,
+        conditions: ruleObj.conditions || [],
+        _added:     Date.now()
+      };
+      rules.push(newRule);
+      localStorage.setItem(KEY, JSON.stringify(rules));
+      // re-render the rules table if visible
+      if (typeof renderCustomRulesTable === 'function') renderCustomRulesTable();
+      addBubble('ai', `✓ Rule "${newRule.name}" added to Custom Detection Rules. It will run on your next email analysis.`);
       updateContextBar();
     } catch(e) {
       addBubble('ai', `Failed to add rule: ${e.message}`);
