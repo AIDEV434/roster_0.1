@@ -456,6 +456,29 @@ footer {
 </head>
 <body>
 
+<!-- Mobile block -->
+<div id="mobile-block" style="display:none;position:fixed;inset:0;z-index:99999;background:#080c10;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;">
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,240,255,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:24px;">
+    <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+  </svg>
+  <h1 style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#ffffff;margin-bottom:12px;letter-spacing:-0.02em;">Desktop Only</h1>
+  <p style="font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.4);max-width:280px;line-height:1.7;margin-bottom:24px;">ROSTER is a forensic console built for desktop use. Open it on your computer for the full experience.</p>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(0,240,255,0.4);letter-spacing:0.08em;">roster.mom</div>
+</div>
+<script>
+(function() {
+  var block = document.getElementById('mobile-block');
+  var body  = document.body;
+  function check() {
+    var mobile = window.innerWidth < 1024;
+    block.style.display = mobile ? 'flex' : 'none';
+    body.style.overflow = mobile ? 'hidden' : '';
+  }
+  check();
+  window.addEventListener('resize', check);
+})();
+</script>
+
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 <canvas id="bgc"></canvas>
