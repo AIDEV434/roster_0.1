@@ -2022,11 +2022,12 @@ code {
 /* ─── SETUP SCREEN ─── */
 .setup-overlay {
   position: fixed; inset: 0; z-index: 50000;
-  background: linear-gradient(135deg, #0a0d12 0%, #161b26 100%);
+  background: rgba(0, 0, 0, 0.85);
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
+  backdrop-filter: blur(4px);
 }
-.setup-overlay.hidden { display: none; }
+.setup-overlay.hidden { display: none !important; }
 .setup-card {
   background: var(--surface);
   border: 1px solid var(--border-2);
@@ -6760,91 +6761,62 @@ What do you need?</div>
   checkSetupGate();
 })();
 
-// Setup Modal initialization
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    function addPersonRow(data = {}) {
-      const peopleList = document.getElementById('people-list');
-      const div = document.createElement('div');
-      div.className = 'person-item';
-      div.innerHTML = `
-        <div>
-          <div class="label-small">Name</div>
-          <input type="text" class="person-name" placeholder="e.g., John Doe" value="${data.display_names?.[0] || ''}">
-        </div>
-        <div>
-          <div class="label-small">Email</div>
-          <input type="email" class="person-email" placeholder="john@company.com" value="${data.addresses?.[0] || ''}">
-        </div>
-        <div>
-          <div class="label-small">Role</div>
-          <input type="text" class="person-role" placeholder="e.g., CEO" value="${data.role || ''}">
-        </div>
-        <button type="button" class="remove-person-btn">Remove</button>
-      `;
-      div.querySelector('.remove-person-btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        div.remove();
+// Setup Modal initialization (inline, runs immediately)
+document.addEventListener('DOMContentLoaded', initializeSetup, false);
+function initializeSetup() {
+  const peopleList = document.getElementById('people-list');
+  const addPersonBtn = document.getElementById('add-person-btn');
+  const setupForm = document.getElementById('setup-form');
+  const setupOverlay = document.getElementById('setup-overlay');
+
+  function addPersonRow(data = {}) {
+    const div = document.createElement('div');
+    div.className = 'person-item';
+    div.innerHTML = `<div><div class="label-small">Name</div><input type="text" class="person-name" placeholder="e.g., John Doe" value="${data.display_names?.[0] || ''}"></div><div><div class="label-small">Email</div><input type="email" class="person-email" placeholder="john@company.com" value="${data.addresses?.[0] || ''}"></div><div><div class="label-small">Role</div><input type="text" class="person-role" placeholder="e.g., CEO" value="${data.role || ''}"></div><button type="button" class="remove-person-btn">Remove</button>`;
+    div.querySelector('.remove-person-btn').addEventListener('click', (e) => { e.preventDefault(); div.remove(); });
+    peopleList.appendChild(div);
+  }
+
+  if (addPersonBtn) addPersonBtn.addEventListener('click', (e) => { e.preventDefault(); addPersonRow(); });
+
+  if (setupForm) {
+    setupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const companyName = document.getElementById('setup-company-name').value.trim();
+      const domainsStr = document.getElementById('setup-domains').value.trim();
+      const domains = domainsStr.split(',').map(d => d.trim()).filter(d => d);
+      if (!companyName) { alert('Please enter a company name'); return; }
+      if (domains.length === 0) { alert('Please enter at least one company domain'); return; }
+      const people = [];
+      document.querySelectorAll('.person-item').forEach(item => {
+        const name = item.querySelector('.person-name').value.trim();
+        const email = item.querySelector('.person-email').value.trim();
+        const role = item.querySelector('.person-role').value.trim();
+        if (name && email) people.push({ display_names: [name], addresses: [email], role: role || 'Staff', id: '', financial_authority: false, finding_rules: [] });
       });
-      peopleList.appendChild(div);
-    }
-
-    // Add button listener
-    const addPersonBtn = document.getElementById('add-person-btn');
-    if (addPersonBtn) {
-      addPersonBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        addPersonRow();
-      });
-    }
-
-    // Form submit listener
-    const setupForm = document.getElementById('setup-form');
-    if (setupForm) {
-      setupForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const companyName = document.getElementById('setup-company-name').value.trim();
-        const domainsStr = document.getElementById('setup-domains').value.trim();
-        const domains = domainsStr.split(',').map(d => d.trim()).filter(d => d);
-
-        if (!companyName) { alert('Please enter a company name'); return; }
-        if (domains.length === 0) { alert('Please enter at least one company domain'); return; }
-
-        const people = [];
-        document.querySelectorAll('.person-item').forEach(item => {
-          const name = item.querySelector('.person-name').value.trim();
-          const email = item.querySelector('.person-email').value.trim();
-          const role = item.querySelector('.person-role').value.trim();
-          if (name && email) {
-            people.push({ display_names: [name], addresses: [email], role: role || 'Staff', id: '', financial_authority: false, finding_rules: [] });
-          }
-        });
-
-        if (people.length === 0) { alert('Please add at least one team member'); return; }
-
-        const roster = { organization: { name: companyName, primary_domains: domains, dmarc_required: false }, people: people };
-        saveRoster(roster);
-        document.getElementById('setup-overlay').classList.add('hidden');
-        document.querySelector('.shell').style.display = 'block';
-        document.querySelector('.sys-bar').style.display = 'flex';
-        renderRosterUI(roster);
-      });
-    }
-
-    // Check if setup needed
-    const roster = loadRoster();
-    if (!roster.organization?.name || !roster.people || roster.people.length === 0) {
-      document.getElementById('setup-overlay').classList.remove('hidden');
-      document.querySelector('.shell').style.display = 'none';
-      document.querySelector('.sys-bar').style.display = 'none';
-      addPersonRow(); // Add initial empty row
-    } else {
-      document.getElementById('setup-overlay').classList.add('hidden');
+      if (people.length === 0) { alert('Please add at least one team member'); return; }
+      const roster = { organization: { name: companyName, primary_domains: domains, dmarc_required: false }, people: people };
+      saveRoster(roster);
+      setupOverlay.classList.add('hidden');
       document.querySelector('.shell').style.display = 'block';
       document.querySelector('.sys-bar').style.display = 'flex';
-    }
-  }, 50);
-});
+      renderRosterUI(roster);
+    });
+  }
+
+  // Check if setup needed and init
+  const roster = loadRoster();
+  if (!roster.organization?.name || !roster.people || roster.people.length === 0) {
+    setupOverlay.classList.remove('hidden');
+    document.querySelector('.shell').style.display = 'none';
+    document.querySelector('.sys-bar').style.display = 'none';
+    addPersonRow();
+  } else {
+    setupOverlay.classList.add('hidden');
+    document.querySelector('.shell').style.display = 'block';
+    document.querySelector('.sys-bar').style.display = 'flex';
+  }
+}
 </script>
 </body>
 </html>
