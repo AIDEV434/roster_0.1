@@ -6850,6 +6850,34 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById('people-list').appendChild(div);
         });
       }
+
+      // Attach form submit handler
+      const setupForm = document.getElementById('setup-form');
+      if (setupForm && !setupForm.__listenerAttached) {
+        setupForm.__listenerAttached = true;
+        setupForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const companyName = document.getElementById('setup-company-name').value.trim();
+          const domainsStr = document.getElementById('setup-domains').value.trim();
+          const domains = domainsStr.split(',').map(d => d.trim()).filter(d => d);
+          if (!companyName) { alert('Please enter a company name'); return; }
+          if (domains.length === 0) { alert('Please enter at least one company domain'); return; }
+          const people = [];
+          document.querySelectorAll('.person-item').forEach(item => {
+            const name = item.querySelector('.person-name').value.trim();
+            const email = item.querySelector('.person-email').value.trim();
+            const role = item.querySelector('.person-role').value.trim();
+            if (name && email) people.push({ display_names: [name], addresses: [email], role: role || 'Staff', id: '', financial_authority: false, finding_rules: [] });
+          });
+          if (people.length === 0) { alert('Please add at least one team member'); return; }
+          const roster = { organization: { name: companyName, primary_domains: domains, dmarc_required: false }, people: people };
+          saveRoster(roster);
+          document.getElementById('setup-overlay').classList.add('hidden');
+          document.querySelector('.shell').style.display = 'block';
+          document.querySelector('.sys-bar').style.display = 'flex';
+          if (typeof renderRosterUI === 'function') renderRosterUI(roster);
+        });
+      }
     }
   }, 200);
 });
