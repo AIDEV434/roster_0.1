@@ -6824,5 +6824,36 @@ setTimeout(() => {
   }
 }, 100);
 </script>
+
+<!-- Fallback: directly add person row if it doesn't exist -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    if (document.querySelectorAll('.person-item').length === 0 && document.getElementById('people-list')) {
+      const peopleList = document.getElementById('people-list');
+      const div = document.createElement('div');
+      div.className = 'person-item';
+      div.innerHTML = '<div><div class="label-small">Name</div><input type="text" class="person-name" placeholder="e.g., John Doe" value=""></div><div><div class="label-small">Email</div><input type="email" class="person-email" placeholder="john@company.com" value=""></div><div><div class="label-small">Role</div><input type="text" class="person-role" placeholder="e.g., CEO" value=""></div><button type="button" class="remove-person-btn">Remove</button>';
+      div.querySelector('.remove-person-btn').addEventListener('click', function(e) { e.preventDefault(); div.remove(); });
+      peopleList.appendChild(div);
+
+      // Attach add person button listener if not already attached
+      const addBtn = document.getElementById('add-person-btn');
+      if (addBtn && !addBtn.__listenerAttached) {
+        addBtn.__listenerAttached = true;
+        addBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const div = document.createElement('div');
+          div.className = 'person-item';
+          div.innerHTML = '<div><div class="label-small">Name</div><input type="text" class="person-name" placeholder="e.g., John Doe" value=""></div><div><div class="label-small">Email</div><input type="email" class="person-email" placeholder="john@company.com" value=""></div><div><div class="label-small">Role</div><input type="text" class="person-role" placeholder="e.g., CEO" value=""></div><button type="button" class="remove-person-btn">Remove</button>';
+          div.querySelector('.remove-person-btn').addEventListener('click', function(e) { e.preventDefault(); div.remove(); });
+          document.getElementById('people-list').appendChild(div);
+        });
+      }
+    }
+  }, 200);
+});
+</script>
+
 </body>
 </html>
