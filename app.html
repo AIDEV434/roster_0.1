@@ -6816,8 +6816,10 @@ function initializeSetup() {
 }
 
 // Run setup initialization with slight delay to ensure DOM is fully ready
+window.__setupInitCalled = false;
 setTimeout(() => {
   if (typeof initializeSetup === 'function') {
+    window.__setupInitCalled = true;
     initializeSetup();
   }
 }, 100);
