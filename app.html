@@ -2018,6 +2018,120 @@ code {
   .dashboard-grid { grid-template-columns: 1fr 1fr; }
   .dash-grid-2 { grid-template-columns: 1fr; }
 }
+
+/* ─── SETUP SCREEN ─── */
+.setup-overlay {
+  position: fixed; inset: 0; z-index: 50000;
+  background: linear-gradient(135deg, #0a0d12 0%, #161b26 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.setup-overlay.hidden { display: none; }
+.setup-card {
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 600px; width: 100%;
+  padding: 40px;
+  color: var(--text-1);
+}
+.setup-card h1 {
+  font-size: 28px; font-weight: 700; margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--cyan), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.setup-card .subtitle {
+  font-size: 14px; color: var(--text-2);
+  margin-bottom: 32px;
+}
+.setup-form .form-group {
+  margin-bottom: 24px;
+}
+.setup-form label {
+  display: block; margin-bottom: 8px;
+  font-size: 12px; font-weight: 600;
+  color: var(--text-1); text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.setup-form .input {
+  width: 100%;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-1); font-size: 13px;
+  padding: 10px 14px; border-radius: var(--radius);
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.setup-form .input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.people-section {
+  margin-top: 28px; padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.people-section h3 {
+  font-size: 13px; font-weight: 600; margin-bottom: 16px;
+  color: var(--text-1); text-transform: uppercase;
+}
+.person-item {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  margin-bottom: 12px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px; align-items: flex-end;
+}
+.person-item input {
+  background: var(--surface-3); border: 1px solid var(--border);
+  color: var(--text-1); font-size: 12px;
+  padding: 8px 10px; border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.person-item input:focus {
+  border-color: var(--primary);
+}
+.person-item .label-small {
+  font-size: 10px; color: var(--text-3); text-transform: uppercase;
+}
+.remove-person-btn {
+  background: var(--red-light); border: 1px solid var(--red);
+  color: var(--red); padding: 6px 10px; border-radius: var(--radius);
+  cursor: pointer; font-size: 12px; font-weight: 500;
+  transition: background 0.2s;
+}
+.remove-person-btn:hover {
+  background: var(--red-border);
+}
+.add-person-btn, .setup-submit-btn {
+  background: var(--primary-light); border: 1px solid var(--primary-border);
+  color: var(--primary); padding: 9px 16px; border-radius: var(--radius);
+  cursor: pointer; font-size: 13px; font-weight: 600;
+  transition: background 0.2s, box-shadow 0.2s;
+  margin-top: 12px;
+}
+.add-person-btn:hover, .setup-submit-btn:hover {
+  background: var(--primary-border);
+  box-shadow: 0 0 12px var(--primary-light);
+}
+.setup-actions {
+  display: flex; gap: 12px; justify-content: flex-end;
+  margin-top: 32px;
+}
+.setup-submit-btn {
+  background: var(--primary); color: white;
+  padding: 10px 24px; font-weight: 600;
+}
+.setup-submit-btn:hover {
+  box-shadow: 0 0 16px var(--primary);
+}
+.setup-submit-btn:disabled {
+  opacity: 0.5; cursor: not-allowed;
+}
+
 </style>
 </head>
 <body>
@@ -2125,6 +2239,37 @@ code {
     <div class="sys-indicator" id="rdap-status">
       <span class="dot off" style="background:var(--text-3)"></span><span>RDAP Disabled</span>
     </div>
+  </div>
+</div>
+
+<!-- Setup Modal -->
+<div class="setup-overlay" id="setup-overlay">
+  <div class="setup-card">
+    <h1>Welcome to ROSTER</h1>
+    <p class="subtitle">Set up your company profile to begin analyzing emails</p>
+
+    <form class="setup-form" id="setup-form">
+      <div class="form-group">
+        <label for="setup-company-name">Company Name *</label>
+        <input type="text" class="input" id="setup-company-name" placeholder="e.g., Acme Corp" required>
+      </div>
+
+      <div class="form-group">
+        <label for="setup-domains">Company Domains *</label>
+        <input type="text" class="input" id="setup-domains" placeholder="e.g., acme.com, acmecorp.com" required>
+        <small style="font-size:11px;color:var(--text-3);margin-top:4px;display:block;">Comma-separated list of your verified company domains</small>
+      </div>
+
+      <div class="people-section">
+        <h3>Add Your Team (at least 1 person)</h3>
+        <div id="people-list"></div>
+        <button type="button" class="add-person-btn" id="add-person-btn">+ Add Person</button>
+      </div>
+
+      <div class="setup-actions">
+        <button type="submit" class="setup-submit-btn" id="setup-submit">Start Analyzing</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -6488,6 +6633,131 @@ What do you need?</div>
 
   // Init on load
   setTimeout(initChat, 300);
+
+  // ═══════════════════════════════════════════════════
+  // SETUP MODAL LOGIC
+  // ═══════════════════════════════════════════════════
+  const setupOverlay = document.getElementById('setup-overlay');
+  const setupForm = document.getElementById('setup-form');
+  const setupCompanyName = document.getElementById('setup-company-name');
+  const setupDomains = document.getElementById('setup-domains');
+  const peopleList = document.getElementById('people-list');
+  const addPersonBtn = document.getElementById('add-person-btn');
+
+  // Check if roster exists on page load
+  function checkSetupGate() {
+    const roster = loadRoster();
+    // If no company name or no people, show setup
+    if (!roster.organization?.name || !roster.people || roster.people.length === 0) {
+      setupOverlay.classList.remove('hidden');
+      document.querySelector('.shell').style.display = 'none';
+      document.querySelector('.sys-bar').style.display = 'none';
+    } else {
+      setupOverlay.classList.add('hidden');
+      document.querySelector('.shell').style.display = 'block';
+      document.querySelector('.sys-bar').style.display = 'flex';
+    }
+  }
+
+  // Add person form row
+  function addPersonRow(data = {}) {
+    const div = document.createElement('div');
+    div.className = 'person-item';
+    div.innerHTML = `
+      <div>
+        <div class="label-small">Name</div>
+        <input type="text" class="person-name" placeholder="e.g., John Doe" value="${data.display_names?.[0] || ''}">
+      </div>
+      <div>
+        <div class="label-small">Email</div>
+        <input type="email" class="person-email" placeholder="john@company.com" value="${data.addresses?.[0] || ''}">
+      </div>
+      <div>
+        <div class="label-small">Role</div>
+        <input type="text" class="person-role" placeholder="e.g., CEO" value="${data.role || ''}">
+      </div>
+      <button type="button" class="remove-person-btn">Remove</button>
+    `;
+    div.querySelector('.remove-person-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      div.remove();
+    });
+    peopleList.appendChild(div);
+  }
+
+  // Initialize with one empty row
+  addPersonRow();
+
+  addPersonBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    addPersonRow();
+  });
+
+  setupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const companyName = setupCompanyName.value.trim();
+    const domainsStr = setupDomains.value.trim();
+    const domains = domainsStr.split(',').map(d => d.trim()).filter(d => d);
+
+    // Validate
+    if (!companyName) {
+      alert('Please enter a company name');
+      return;
+    }
+    if (domains.length === 0) {
+      alert('Please enter at least one company domain');
+      return;
+    }
+
+    // Collect people
+    const people = [];
+    document.querySelectorAll('.person-item').forEach(item => {
+      const name = item.querySelector('.person-name').value.trim();
+      const email = item.querySelector('.person-email').value.trim();
+      const role = item.querySelector('.person-role').value.trim();
+
+      if (name && email) {
+        people.push({
+          display_names: [name],
+          addresses: [email],
+          role: role || 'Staff',
+          id: '',
+          financial_authority: false,
+          finding_rules: []
+        });
+      }
+    });
+
+    if (people.length === 0) {
+      alert('Please add at least one team member');
+      return;
+    }
+
+    // Build roster object
+    const roster = {
+      organization: {
+        name: companyName,
+        primary_domains: domains,
+        dmarc_required: false
+      },
+      people: people
+    };
+
+    // Save to localStorage
+    saveRoster(roster);
+
+    // Hide setup, show app
+    setupOverlay.classList.add('hidden');
+    document.querySelector('.shell').style.display = 'block';
+    document.querySelector('.sys-bar').style.display = 'flex';
+
+    // Refresh roster panel if visible
+    renderRosterUI(roster);
+  });
+
+  // Run check on load
+  checkSetupGate();
 })();
 </script>
 </body>
