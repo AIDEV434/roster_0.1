@@ -6815,8 +6815,12 @@ function initializeSetup() {
   }
 }
 
-// Run setup initialization immediately
-initializeSetup();
+// Run setup initialization with slight delay to ensure DOM is fully ready
+setTimeout(() => {
+  if (typeof initializeSetup === 'function') {
+    initializeSetup();
+  }
+}, 100);
 </script>
 </body>
 </html>
