@@ -5617,12 +5617,10 @@ async function runInspection() {
 
   try {
     const r = loadRoster();
-    if (!r.people || r.people.length === 0) {
-      saveRoster(EXAMPLE_ROSTER);
-      renderRosterUI(EXAMPLE_ROSTER);
-    } else {
+    if (r.people && r.people.length > 0) {
       renderRosterUI(r);
     }
+    // Note: Setup modal will handle empty roster - don't auto-populate with example data
   } catch(e) { console.error('loadRoster/renderRosterUI', e); }
 
   try {
